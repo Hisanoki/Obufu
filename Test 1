@@ -1,9 +1,3 @@
--- ══════════════════════════════════════════════
---   STARCROW HUB  |  PART 1 — SECURE LOADER
---   Kiểm tra môi trường trước, rồi mới load core
--- ══════════════════════════════════════════════
-
--- ── [1] COOLDOWN (chống re-execute liên tục) ──
 do
     local COOLDOWN = 10
     local now = tick()
@@ -19,14 +13,9 @@ do
     getgenv()._SC_Loaded  = true
 end
 
--- ── [2] ANTI LOADSTRING SPY ───────────────────
---  Kỹ thuật: spy hook thường wrap loadstring bằng
---  một Lua closure, còn bản gốc là C closure.
---  Ta dùng nhiều lớp kiểm tra để tránh bypass đơn giản.
 do
     local function _kick(reason)
         warn("[StarCrow] Security check failed: " .. reason)
-        -- Huỷ flag để không leak bất cứ thứ gì
         getgenv()._SC_Loaded  = nil
         getgenv()._SC_LastExe = nil
         game:GetService("Players").LocalPlayer:Kick(
@@ -35,13 +24,11 @@ do
         )
     end
 
-    -- CHECK 1: loadstring phải là C closure (bản gốc engine)
     if not iscclosure(loadstring) then
         _kick("loadstring is not a C-closure (hooked?)")
         return
     end
 
-    -- CHECK 2: debug.info trên loadstring phải trỏ về [C]
     do
         local ok, src = pcall(debug.info, loadstring, "s")
         if ok and src and src ~= "[C]" then
@@ -50,30 +37,17 @@ do
         end
     end
 
-    -- CHECK 3: Thử gọi một chuỗi "canary" vô hại.
-    --  Nếu spy đang chạy, nó sẽ in/clipboard nội dung này.
-    --  Còn ta dùng pcall để chắc chắn không crash.
-    --  (Không thể phát hiện clipboard leak từ phía client,
-    --   nhưng kết hợp check 1+2 đủ để chặn script thông thường.)
     do
         local _canary = "-- SC_CANARY_7f3a9b"
         local fn, err = loadstring(_canary)
-        -- loadstring hợp lệ sẽ trả về nil, "attempt to..." vì
-        -- _canary là comment, không có code thực thi → trả về function rỗng
-        -- Quan trọng: nếu bị hook, check 1 đã chặn rồi
-        -- Ở đây ta chỉ verify loadstring còn hoạt động bình thường
         if type(fn) ~= "function" then
-            -- comment thuần túy vẫn compile thành function hợp lệ
             _kick("loadstring returned unexpected result for canary")
             return
         end
     end
 
-    -- CHECK 4: So sánh upvalue count của loadstring gốc
-    --  hookfunction thường thêm upvalue để giữ ref hàm cũ
     do
-        local ok, n = pcall(debug.info, loadstring, "u")  -- số upvalue
-        -- C closure = 0 upvalue; Lua wrapper sẽ có >= 1
+        local ok, n = pcall(debug.info, loadstring, "u")
         if ok and type(n) == "number" and n > 0 then
             _kick("loadstring has unexpected upvalues (" .. n .. ")")
             return
@@ -81,7 +55,6 @@ do
     end
 end
 
--- ── [3] GAME CHECK ────────────────────────────
 if game.PlaceId ~= 2474168535 then
     game:GetService("Players").LocalPlayer:Kick(
         "[StarCrow] This script only supports Westbound!"
@@ -89,9 +62,7 @@ if game.PlaceId ~= 2474168535 then
     return
 end
 
--- ── [4] SHARED CONFIG (được chia sẻ sang Part 2) ─
 getgenv().StarConfig = {
-    -- Silent Aim
     AimPlayer        = false,
     AimNPC           = false,
     TeamCheck        = false,
@@ -105,11 +76,9 @@ getgenv().StarConfig = {
     NoToolCheck      = false,
     Prediction       = false,
     PredictionFactor = 0.15,
-    -- Visual
     ESPEnabled       = false,
     NoFog            = false,
     FullBright       = false,
-    -- Player
     LoopSpeedEnabled = false,
     WalkSpeed        = 30,
     InfJumpEnabled   = false,
@@ -117,10 +86,6 @@ getgenv().StarConfig = {
     AntiFallDamage   = false,
 }
 
--- ── [5] GỌI PART 2 (thay link raw của bạn vào đây) ─
---  Tất cả logic cốt lõi + ban list + GUI nằm trong Part 2.
---  Part 2 được tải bằng loadstring SAU KHI đã xác nhận
---  môi trường an toàn ở trên.
 local PART2_URL = "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%202"
 local ok, result = pcall(function()
     return loadstring(game:HttpGet(PART2_URL, true))()
