@@ -121,8 +121,7 @@ getgenv().StarConfig = {
 --  Tất cả logic cốt lõi + ban list + GUI nằm trong Part 2.
 --  Part 2 được tải bằng loadstring SAU KHI đã xác nhận
 --  môi trường an toàn ở trên.
-local PART2_URL = "https://raw.githubusercontent.com/YOUR_REPO/main/Part2_Core.lua"
-
+local PART2_URL = "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%202"
 local ok, result = pcall(function()
     return loadstring(game:HttpGet(PART2_URL, true))()
 end)
