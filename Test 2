@@ -1,12 +1,809 @@
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v24,v25) local v26={};for v41=1, #v24 do v6(v26,v0(v4(v1(v2(v24,v41,v41 + 1 )),v1(v2(v25,1 + (v41% #v25) ,1 + (v41% #v25) + 1 )))%256 ));end return v5(v26);end local v8=tonumber;local v9=string.byte;local v10=string.char;local v11=string.sub;local v12=string.gsub;local v13=string.rep;local v14=table.concat;local v15=table.insert;local v16=math.ldexp;local v17=getfenv or function() return _ENV;end ;local v18=setmetatable;local v19=pcall;local v20=select;local v21=unpack or table.unpack ;local v22=tonumber;local function v23(v27,v28,...) local v29=1;local v30;v27=v12(v11(v27,5),v7("\125\28","\153\83\50\50\150"),function(v42) if (v9(v42,2)==81) then v30=v8(v11(v42,1,1));return "";else local v92=0;local v93;while true do if (v92==0) then v93=v10(v8(v42,49 -33 ));if v30 then local v118=v13(v93,v30);v30=nil;return v118;else return v93;end break;end end end end);local function v31(v43,v44,v45) if v45 then local v94=0;local v95;while true do if (v94==0) then v95=(v43/((5 -3)^(v44-1)))%((3 -1)^(((v45-1) -(v44-1)) + 1)) ;return v95-(v95%(2 -1)) ;end end else local v96=0;local v97;while true do if (v96==0) then v97=2^(v44-1) ;return (((v43%(v97 + v97))>=v97) and 1) or 0 ;end end end end local function v32() local v46=v9(v27,v29,v29);v29=v29 + 1 ;return v46;end local function v33() local v47=0;local v48;local v49;while true do if (v47==1) then return (v49 * 256) + v48 ;end if (0==v47) then v48,v49=v9(v27,v29,v29 + 2 );v29=v29 + 2 ;v47=1;end end end local function v34() local v50=0;local v51;local v52;local v53;local v54;while true do if (v50==1) then return (v54 * 16777216) + (v53 * 65536) + (v52 * 256) + v51 ;end if (v50==0) then v51,v52,v53,v54=v9(v27,v29,v29 + 3 );v29=v29 + 4 ;v50=1;end end end local function v35() local v55=v34();local v56=v34();local v57=620 -(555 + 64) ;local v58=(v31(v56,1,20) * (2^32)) + v55 ;local v59=v31(v56,21,31);local v60=((v31(v56,32)==1) and  -1) or 1 ;if (v59==0) then if (v58==0) then return v60 * 0 ;else local v102=0;while true do if (v102==0) then v59=1;v57=0;break;end end end elseif (v59==2047) then return ((v58==0) and (v60 * (1/0))) or (v60 * NaN) ;end return v16(v60,v59-1023 ) * (v57 + (v58/(2^52))) ;end local function v36(v61) local v62=0;local v63;local v64;while true do if (0==v62) then v63=nil;if  not v61 then v61=v34();if (v61==0) then return "";end end v62=1;end if (3==v62) then return v14(v64);end if (v62==1) then v63=v11(v27,v29,(v29 + v61) -1 );v29=v29 + v61 ;v62=2;end if (2==v62) then v64={};for v103=1, #v63 do v64[v103]=v10(v9(v11(v63,v103,v103)));end v62=3;end end end local v37=v34;local function v38(...) return {...},v20("#",...);end local function v39() local v65=0;local v66;local v67;local v68;local v69;local v70;local v71;while true do if (v65==1) then v70=v34();v71={};for v105=569 -(367 + 201) ,v70 do local v106=v32();local v107;if (v106==1) then v107=v32()~=(927 -(214 + 713)) ;elseif (v106==(1 + 1)) then v107=v35();elseif (v106==3) then v107=v36();end v71[v105]=v107;end v69[3]=v32();v65=2;end if (v65==0) then v66={};v67={};v68={};v69={v66,v67,nil,v68};v65=1;end if (v65==2) then for v109=1 + 0 ,v34() do local v110=0;local v111;while true do if (v110==0) then v111=v32();if (v31(v111,1,1)==0) then local v119=0;local v120;local v121;local v122;while true do if (v119==1) then v122={v33(),v33(),nil,nil};if (v120==0) then v122[3]=v33();v122[4]=v33();elseif (v120==(1 + 0)) then v122[3]=v34();elseif (v120==2) then v122[3 -0 ]=v34() -(2^16) ;elseif (v120==3) then local v560=0;while true do if (v560==0) then v122[3]=v34() -(2^16) ;v122[4]=v33();break;end end end v119=2;end if (v119==2) then if (v31(v121,1,1)==1) then v122[2]=v71[v122[2]];end if (v31(v121,2,1067 -(68 + 997) )==1) then v122[3]=v71[v122[1273 -(226 + 1044) ]];end v119=3;end if (v119==3) then if (v31(v121,3,3)==1) then v122[4]=v71[v122[4]];end v66[v109]=v122;break;end if (v119==0) then v120=v31(v111,879 -(282 + 595) ,3);v121=v31(v111,4,1643 -(1523 + 114) );v119=1;end end end break;end end end for v112=1,v34() do v67[v112-1 ]=v39();end return v69;end end end local function v40(v72,v73,v74) local v75=v72[1];local v76=v72[2];local v77=v72[3];return function(...) local v78=v75;local v79=v76;local v80=v77;local v81=v38;local v82=1;local v83= -1;local v84={};local v85={...};local v86=v20("#",...) -1 ;local v87={};local v88={};for v98=0 -0 ,v86 do if (v98>=v80) then v84[v98-v80 ]=v85[v98 + (118 -(32 + 85)) ];else v88[v98]=v85[v98 + 1 ];end end local v89=(v86-v80) + 1 ;local v90;local v91;while true do v90=v78[v82];v91=v90[1];if (v91<=29) then if (v91<=14) then if (v91<=(6 + 0)) then if (v91<=2) then if (v91<=0) then v88[v90[2]]=v88[v90[3]] + v90[4] ;elseif (v91==1) then local v135=0;local v136;local v137;while true do if (v135==0) then v136=v90[3];v137=v88[v136];v135=1;end if (v135==1) then for v500=v136 + 1 ,v90[4] do v137=v137   .. v88[v500] ;end v88[v90[2]]=v137;break;end end else local v138=0;local v139;local v140;local v141;while true do if (v138==2) then if (v140>0) then if (v141<=v88[v139 + (958 -(892 + 65)) ]) then v82=v90[3];v88[v139 + 3 ]=v141;end elseif (v141>=v88[v139 + 1 ]) then v82=v90[7 -4 ];v88[v139 + 3 ]=v141;end break;end if (v138==0) then v139=v90[2];v140=v88[v139 + 1 + 1 ];v138=1;end if (v138==1) then v141=v88[v139] + v140 ;v88[v139]=v141;v138=2;end end end elseif (v91<=4) then if (v91==3) then v88[v90[2]]=v88[v90[3]]%v88[v90[4]] ;else local v143=0;local v144;local v145;local v146;local v147;while true do if (0==v143) then v144=nil;v145,v146=nil;v147=nil;v88[v90[2]]=v73[v90[3]];v143=1;end if (v143==2) then v90=v78[v82];v88[v90[3 -1 ]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v143=3;end if (v143==3) then v147=v90[352 -(87 + 263) ];v145,v146=v81(v88[v147](v21(v88,v147 + 1 ,v90[3])));v83=(v146 + v147) -1 ;v144=0;v143=4;end if (4==v143) then for v501=v147,v83 do local v502=0;while true do if (v502==0) then v144=v144 + (181 -(67 + 113)) ;v88[v501]=v145[v144];break;end end end v82=v82 + 1 ;v90=v78[v82];v147=v90[2];v143=5;end if (v143==1) then v82=v82 + (1 -0) ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v143=2;end if (v143==5) then v88[v147](v21(v88,v147 + 1 ,v83));v82=v82 + 1 ;v90=v78[v82];v82=v90[3];break;end end end elseif (v91>(4 + 1)) then local v148=0;local v149;local v150;local v151;local v152;while true do if (v148==0) then v149=nil;v150,v151=nil;v152=nil;v148=1;end if (v148==4) then v152=v90[4 -2 ];v150,v151=v81(v88[v152](v21(v88,v152 + 1 ,v90[3])));v83=(v151 + v152) -1 ;v148=5;end if (v148==2) then v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v148=3;end if (v148==3) then v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v148=4;end if (v148==6) then v90=v78[v82];v152=v90[2];v88[v152](v21(v88,v152 + 1 ,v83));break;end if (v148==5) then v149=0 + 0 ;for v503=v152,v83 do local v504=0;while true do if (0==v504) then v149=v149 + 1 ;v88[v503]=v150[v149];break;end end end v82=v82 + 1 ;v148=6;end if (1==v148) then v88[v90[2]]=v73[v90[3]];v82=v82 + 1 ;v90=v78[v82];v148=2;end end else local v153=0;while true do if (1==v153) then v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[11 -8 ];v82=v82 + 1 ;v153=2;end if (v153==2) then v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v153=3;end if (v153==3) then v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];if (v88[v90[2]]<v88[v90[4]]) then v82=v82 + 1 ;else v82=v90[3];end break;end if (v153==0) then v88[v90[2]]=v88[v90[3]] + v90[4] ;v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]] + v90[4] ;v153=1;end end end elseif (v91<=10) then if (v91<=8) then if (v91==7) then local v154=0;local v155;while true do if (v154==0) then v155=v90[2];v88[v155](v21(v88,v155 + 1 ,v83));break;end end elseif v88[v90[2]] then v82=v82 + 1 ;else v82=v90[3];end elseif (v91>9) then v88[v90[2]]=v90[3] + v88[v90[4]] ;elseif  not v88[v90[954 -(802 + 150) ]] then v82=v82 + 1 ;else v82=v90[7 -4 ];end elseif (v91<=(21 -9)) then if (v91==11) then local v157=0;local v158;local v159;local v160;while true do if (v157==1) then v160={};v159=v18({},{[v7("\98\73\122\18\119\174\85","\45\61\22\19\124\19\203")]=function(v505,v506) local v507=0;local v508;while true do if (v507==0) then v508=v160[v506];return v508[1 + 0 ][v508[999 -(915 + 82) ]];end end end,[v7("\254\45\3\240\21\121\183\197\23\21","\217\161\114\109\149\98\16")]=function(v509,v510,v511) local v512=0;local v513;while true do if (v512==0) then v513=v160[v510];v513[1][v513[2]]=v511;break;end end end});v157=2;end if (v157==0) then v158=v79[v90[3]];v159=nil;v157=1;end if (v157==2) then for v514=1,v90[4] do local v515=0;local v516;while true do if (v515==1) then if (v516[1]==50) then v160[v514-(2 -1) ]={v88,v516[3]};else v160[v514-1 ]={v73,v516[2 + 1 ]};end v87[ #v87 + 1 ]=v160;break;end if (v515==0) then v82=v82 + 1 ;v516=v78[v82];v515=1;end end end v88[v90[2 -0 ]]=v40(v158,v159,v74);break;end end else local v161=0;local v162;local v163;while true do if (v161==0) then v162=v90[2];v163=v88[v162];v161=1;end if (1==v161) then for v517=v162 + (1188 -(1069 + 118)) ,v83 do v15(v163,v88[v517]);end break;end end end elseif (v91>13) then local v164=0;local v165;while true do if (v164==0) then v165=v90[2];do return v88[v165](v21(v88,v165 + 1 ,v90[3]));end break;end end else v88[v90[2]]=v73[v90[6 -3 ]];end elseif (v91<=21) then if (v91<=17) then if (v91<=15) then v88[v90[2]][v88[v90[3]]]=v88[v90[4]];elseif (v91>(34 -18)) then do return v88[v90[2]];end else local v168=0;local v169;while true do if (v168==0) then v169=v90[2];v88[v169]=v88[v169](v88[v169 + 1 ]);break;end end end elseif (v91<=19) then if (v91==18) then local v170=0;while true do if (v170==0) then v88[v90[1 + 1 ]]=v90[3]~=(0 -0) ;v82=v82 + 1 ;break;end end else v88[v90[2]]=v74[v90[3 + 0 ]];end elseif (v91==20) then v88[v90[2]]=v90[3];else local v175=v90[2];local v176,v177=v81(v88[v175](v88[v175 + 1 ]));v83=(v177 + v175) -1 ;local v178=0;for v311=v175,v83 do local v312=0;while true do if (v312==0) then v178=v178 + 1 ;v88[v311]=v176[v178];break;end end end end elseif (v91<=25) then if (v91<=(814 -(368 + 423))) then if (v91==22) then v88[v90[2]]=v90[3]~=0 ;else v88[v90[2]][v88[v90[3]]]=v90[4];end elseif (v91==24) then local v182=v90[2];v88[v182]=v88[v182](v21(v88,v182 + 1 ,v90[3]));else local v184=0;local v185;local v186;local v187;local v188;while true do if (v184==2) then for v520=v185,v83 do v188=v188 + 1 ;v88[v520]=v186[v188];end break;end if (v184==0) then v185=v90[6 -4 ];v186,v187=v81(v88[v185](v21(v88,v185 + 1 ,v90[3])));v184=1;end if (v184==1) then v83=(v187 + v185) -1 ;v188=0;v184=2;end end end elseif (v91<=27) then if (v91==26) then local v189=0;while true do if (v189==0) then v88[v90[2]]=v74[v90[3]];v82=v82 + (19 -(10 + 8)) ;v90=v78[v82];v88[v90[2]]=v88[v90[3]][v90[4]];v189=1;end if (v189==3) then v88[v90[2]]=v74[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[444 -(416 + 26) ]]=v88[v90[3]][v90[12 -8 ]];v189=4;end if (v189==4) then v82=v82 + 1 + 0 ;v90=v78[v82];v88[v90[3 -1 ]]=v74[v90[3]];v82=v82 + 1 ;v189=5;end if (v189==2) then v90=v78[v82];v88[v90[2]]=v88[v90[3]][v90[4]];v82=v82 + 1 ;v90=v78[v82];v189=3;end if (v189==5) then v90=v78[v82];if  not v88[v90[2]] then v82=v82 + 1 ;else v82=v90[3];end break;end if (1==v189) then v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v74[v90[11 -8 ]];v82=v82 + 1 ;v189=2;end end else v88[v90[2]]=v40(v79[v90[3]],nil,v74);end elseif (v91==28) then if (v88[v90[2]]==v90[442 -(145 + 293) ]) then v82=v82 + (431 -(44 + 386)) ;else v82=v90[3];end else local v191;local v192,v193;local v194;v88[v90[2]]=v90[3];v82=v82 + (1487 -(998 + 488)) ;v90=v78[v82];v194=v90[1 + 1 ];v88[v194]=v88[v194](v21(v88,v194 + 1 ,v90[3]));v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v194=v90[2];v192,v193=v81(v88[v194](v21(v88,v194 + 1 ,v90[3])));v83=(v193 + v194) -1 ;v191=0 + 0 ;for v313=v194,v83 do local v314=0;while true do if (v314==0) then v191=v191 + 1 ;v88[v313]=v192[v191];break;end end end v82=v82 + 1 ;v90=v78[v82];v194=v90[2];v88[v194]=v88[v194](v21(v88,v194 + 1 ,v83));v82=v82 + 1 ;v90=v78[v82];if (v88[v90[2]]==v90[4]) then v82=v82 + 1 ;else v82=v90[3];end end elseif (v91<=44) then if (v91<=36) then if (v91<=32) then if (v91<=(802 -(201 + 571))) then do return v88[v90[2]]();end elseif (v91>31) then local v201=v90[2];v88[v201](v88[v201 + (1139 -(116 + 1022)) ]);else v88[v90[2]]= #v88[v90[3]];end elseif (v91<=34) then if (v91==33) then local v203;local v204;local v205;local v206,v207;local v208;v88[v90[2]]=v74[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]][v90[4]];v82=v82 + 1 ;v90=v78[v82];v88[v90[8 -6 ]]=v74[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]][v90[4]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v208=v90[2];v206,v207=v81(v88[v208](v88[v208 + 1 ]));v83=(v207 + v208) -1 ;v205=0 + 0 ;for v315=v208,v83 do local v316=0;while true do if (v316==0) then v205=v205 + (3 -2) ;v88[v315]=v206[v205];break;end end end v82=v82 + 1 ;v90=v78[v82];v208=v90[2];v88[v208]=v88[v208](v21(v88,v208 + 1 ,v83));v82=v82 + 1 ;v90=v78[v82];v88[v90[7 -5 ]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v208=v90[2];v204=v88[v208];v203=v88[v208 + 2 ];if (v203>0) then if (v204>v88[v208 + 1 ]) then v82=v90[3];else v88[v208 + 3 ]=v204;end elseif (v204<v88[v208 + 1 ]) then v82=v90[3];else v88[v208 + 3 ]=v204;end else local v220=v90[2];do return v21(v88,v220,v220 + v90[3] );end end elseif (v91>35) then local v221=v90[2];local v222=v90[4];local v223=v221 + 2 ;local v224={v88[v221](v88[v221 + (860 -(814 + 45)) ],v88[v223])};for v317=1,v222 do v88[v223 + v317 ]=v224[v317];end local v225=v224[1];if v225 then local v344=0;while true do if (v344==0) then v88[v223]=v225;v82=v90[3];break;end end else v82=v82 + 1 ;end else v82=v90[3];end elseif (v91<=40) then if (v91<=38) then if (v91>37) then local v227=0;local v228;local v229;local v230;local v231;while true do if (v227==2) then v90=v78[v82];v88[v90[2]]=v90[1 + 2 ];v82=v82 + 1 ;v90=v78[v82];v227=3;end if (v227==5) then v88[v231](v21(v88,v231 + 1 ,v83));break;end if (v227==3) then v231=v90[2];v229,v230=v81(v88[v231](v21(v88,v231 + 1 + 0 ,v90[3])));v83=(v230 + v231) -1 ;v228=885 -(261 + 624) ;v227=4;end if (v227==4) then for v531=v231,v83 do local v532=0;while true do if (v532==0) then v228=v228 + 1 ;v88[v531]=v229[v228];break;end end end v82=v82 + 1 ;v90=v78[v82];v231=v90[2];v227=5;end if (v227==1) then v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v227=2;end if (v227==0) then v228=nil;v229,v230=nil;v231=nil;v88[v90[2]]=v73[v90[7 -4 ]];v227=1;end end else v88[v90[2]]=v88[v90[3]][v88[v90[4]]];end elseif (v91==39) then v88[v90[2]]=v88[v90[3]]%v90[4] ;elseif (v90[2]==v88[v90[4]]) then v82=v82 + 1 ;else v82=v90[3];end elseif (v91<=42) then if (v91>41) then local v235=v90[2];local v236,v237=v81(v88[v235](v21(v88,v235 + 1 ,v83)));v83=(v237 + v235) -1 ;local v238=0;for v320=v235,v83 do v238=v238 + 1 ;v88[v320]=v236[v238];end else v88[v90[2]]=v88[v90[3]] * v88[v90[4]] ;end elseif (v91==43) then if (v88[v90[2]]<v88[v90[4]]) then v82=v82 + 1 ;else v82=v90[3];end else local v240=0;local v241;local v242;local v243;while true do if (v240==0) then v241=v90[2];v242={v88[v241](v88[v241 + 1 ])};v240=1;end if (v240==1) then v243=0;for v533=v241,v90[4] do local v534=0;while true do if (v534==0) then v243=v243 + 1 ;v88[v533]=v242[v243];break;end end end break;end end end elseif (v91<=(92 -40)) then if (v91<=48) then if (v91<=(1126 -(1020 + 60))) then if (v91==45) then local v244=v90[2];local v245=v88[v244];local v246=v88[v244 + 2 ];if (v246>0) then if (v245>v88[v244 + 1 ]) then v82=v90[3];else v88[v244 + 3 ]=v245;end elseif (v245<v88[v244 + 1 ]) then v82=v90[3];else v88[v244 + 3 ]=v245;end else do return;end end elseif (v91==47) then v88[v90[2]]={};else local v248=0;local v249;while true do if (v248==0) then v249=nil;v74[v90[3]]=v88[v90[2]];v82=v82 + 1 ;v90=v78[v82];v248=1;end if (v248==2) then v82=v82 + (3 -2) ;v90=v78[v82];v249=v90[2];v88[v249]=v88[v249](v88[v249 + 1 ]);v248=3;end if (v248==5) then v82=v90[3];break;end if (v248==4) then v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v248=5;end if (v248==3) then v82=v82 + 1 ;v90=v78[v82];v88[v90[9 -7 ]]=v88[v90[3]];v82=v82 + 1 ;v248=4;end if (v248==1) then v88[v90[2]]=v74[v90[1426 -(630 + 793) ]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3];v248=2;end end end elseif (v91<=50) then if (v91==(20 + 29)) then for v323=v90[6 -4 ],v90[3] do v88[v323]=nil;end else v88[v90[2]]=v88[v90[1750 -(760 + 987) ]];end elseif (v91==51) then v88[v90[2]]=v88[v90[3]][v90[4]];else local v254=0;local v255;local v256;local v257;while true do if (v254==0) then v255=nil;v256=nil;v257=nil;v254=1;end if (v254==4) then v88[v90[1 + 1 ]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v254=5;end if (v254==1) then v88[v90[2]]={};v82=v82 + (1914 -(1789 + 124)) ;v90=v78[v82];v254=2;end if (v254==2) then v88[v90[768 -(745 + 21) ]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v254=3;end if (v254==3) then v88[v90[2]]= #v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v254=4;end if (v254==6) then if (v255>0) then if (v256>v88[v257 + 1 ]) then v82=v90[3];else v88[v257 + 3 ]=v256;end elseif (v256<v88[v257 + 1 ]) then v82=v90[3];else v88[v257 + 3 ]=v256;end break;end if (v254==5) then v257=v90[2];v256=v88[v257];v255=v88[v257 + (5 -3) ];v254=6;end end end elseif (v91<=56) then if (v91<=54) then if (v91==53) then v74[v90[3]]=v88[v90[2]];else local v260=0;local v261;while true do if (v260==0) then v261=v90[2];v88[v261]=v88[v261](v21(v88,v261 + 1 ,v83));break;end end end elseif (v91>55) then local v262;local v263;local v264;v88[v90[7 -5 ]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[1 + 1 ]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v264=v90[2 + 0 ];v263=v88[v264];v262=v88[v264 + 2 ];if (v262>0) then if (v263>v88[v264 + 1 ]) then v82=v90[3];else v88[v264 + (1058 -(87 + 968)) ]=v263;end elseif (v263<v88[v264 + 1 ]) then v82=v90[3];else v88[v264 + (13 -10) ]=v263;end else local v274;local v275,v276;local v277;v88[v90[2]]=v73[v90[3]];v82=v82 + 1 + 0 ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v277=v90[2];v275,v276=v81(v88[v277](v21(v88,v277 + 1 ,v90[3])));v83=(v276 + v277) -1 ;v274=0;for v325=v277,v83 do v274=v274 + (2 -1) ;v88[v325]=v275[v274];end v82=v82 + 1 ;v90=v78[v82];v277=v90[2];v88[v277](v21(v88,v277 + 1 ,v83));v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];for v328=v90[2],v90[3] do v88[v328]=nil;end end elseif (v91<=58) then if (v91==57) then local v283;local v284,v285;local v286;v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v73[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v73[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v73[v90[3]];v82=v82 + (1414 -(447 + 966)) ;v90=v78[v82];v88[v90[5 -3 ]]=v73[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[1819 -(1703 + 114) ]]=v88[v90[704 -(376 + 325) ]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]] + v90[4] ;v82=v82 + 1 ;v90=v78[v82];v286=v90[2];v284,v285=v81(v88[v286](v21(v88,v286 + 1 ,v90[3])));v83=(v285 + v286) -1 ;v283=0;for v330=v286,v83 do local v331=0;while true do if (v331==0) then v283=v283 + 1 ;v88[v330]=v284[v283];break;end end end v82=v82 + 1 ;v90=v78[v82];v286=v90[2];v88[v286]=v88[v286](v21(v88,v286 + 1 ,v83));v82=v82 + 1 ;v90=v78[v82];v88[v90[2 -0 ]]=v73[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v73[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]= #v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]]%v88[v90[4]] ;v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[3] + v88[v90[4]] ;v82=v82 + (2 -1) ;v90=v78[v82];v88[v90[2]]= #v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[3]]%v88[v90[4]] ;v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v90[1 + 2 ] + v88[v90[4]] ;v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[6 -3 ]] + v90[18 -(9 + 5) ] ;v82=v82 + 1 ;v90=v78[v82];v286=v90[2];v284,v285=v81(v88[v286](v21(v88,v286 + 1 ,v90[3])));v83=(v285 + v286) -1 ;v283=0;for v332=v286,v83 do local v333=0;while true do if (0==v333) then v283=v283 + 1 ;v88[v332]=v284[v283];break;end end end v82=v82 + 1 ;v90=v78[v82];v286=v90[378 -(85 + 291) ];v284,v285=v81(v88[v286](v21(v88,v286 + 1 ,v83)));v83=(v285 + v286) -1 ;v283=0;for v334=v286,v83 do v283=v283 + 1 ;v88[v334]=v284[v283];end v82=v82 + 1 ;v90=v78[v82];v286=v90[2];v88[v286]=v88[v286](v21(v88,v286 + 1 ,v83));v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v88[v90[1268 -(243 + 1022) ]]%v90[4] ;v82=v82 + 1 ;v90=v78[v82];v286=v90[2];v284,v285=v81(v88[v286](v88[v286 + 1 ]));v83=(v285 + v286) -1 ;v283=0;for v337=v286,v83 do local v338=0;while true do if (v338==0) then v283=v283 + (3 -2) ;v88[v337]=v284[v283];break;end end end v82=v82 + 1 ;v90=v78[v82];v286=v90[2 + 0 ];v88[v286](v21(v88,v286 + 1 ,v83));else local v299=0;local v300;local v301;local v302;while true do if (3==v299) then v302=v90[2];v88[v302]=v88[v302](v21(v88,v302 + 1 ,v90[3]));v82=v82 + 1 ;v90=v78[v82];v299=4;end if (1==v299) then v82=v82 + 1 ;v90=v78[v82];v88[v90[1182 -(1123 + 57) ]]=v90[3 + 0 ];v82=v82 + 1 ;v299=2;end if (v299==0) then v300=nil;v301=nil;v302=nil;v88[v90[2]]=v73[v90[3]];v299=1;end if (4==v299) then v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];v301=v90[3];v299=5;end if (v299==2) then v90=v78[v82];v88[v90[2]]=v90[3];v82=v82 + 1 ;v90=v78[v82];v299=3;end if (v299==5) then v300=v88[v301];for v549=v301 + 1 ,v90[4] do v300=v300   .. v88[v549] ;end v88[v90[2]]=v300;v82=v82 + 1 ;v299=6;end if (v299==6) then v90=v78[v82];v302=v90[256 -(163 + 91) ];v88[v302](v88[v302 + 1 ]);break;end end end elseif (v91>(1989 -(1869 + 61))) then local v303=0;local v304;local v305;local v306;local v307;local v308;while true do if (v303==5) then v82=v82 + 1 + 0 ;v90=v78[v82];v308=v90[2];v304=v88[v308];for v550=v308 + 1 ,v83 do v15(v304,v88[v550]);end break;end if (v303==4) then v90=v78[v82];v308=v90[1 + 1 ];v306,v307=v81(v88[v308](v21(v88,v308 + 1 ,v90[3])));v83=(v307 + v308) -1 ;v305=0 -0 ;for v551=v308,v83 do v305=v305 + 1 ;v88[v551]=v306[v305];end v303=5;end if (1==v303) then v90=v78[v82];v88[v90[2]]=v73[v90[10 -7 ]];v82=v82 + (1 -0) ;v90=v78[v82];v88[v90[2]]=v73[v90[3]];v82=v82 + 1 ;v303=2;end if (v303==0) then v304=nil;v305=nil;v306,v307=nil;v308=nil;v88[v90[2]]=v73[v90[1 + 2 ]];v82=v82 + 1 ;v303=1;end if (v303==3) then v90=v78[v82];v88[v90[2]]=v88[v90[3]];v82=v82 + 1 ;v90=v78[v82];for v554=v90[2],v90[3] do v88[v554]=nil;end v82=v82 + 1 ;v303=4;end if (v303==2) then v90=v78[v82];v88[v90[2]]={};v82=v82 + 1 ;v90=v78[v82];v88[v90[2]]=v73[v90[3]];v82=v82 + 1 ;v303=3;end end else local v309=0;local v310;while true do if (v309==0) then v310=v90[2];do return v21(v88,v310,v83);end break;end end end v82=v82 + 1 ;end end;end return v40(v39(),{},v28)(...);end return v23("LOL!0D3Q0003063Q00737472696E6703043Q006368617203043Q00627974652Q033Q0073756203053Q0062697433322Q033Q0062697403043Q0062786F7203053Q007461626C6503063Q00636F6E63617403063Q00696E7365727403053Q006D6174636803083Q00746F6E756D62657203053Q007063612Q6C00243Q00121A3Q00013Q00206Q000200122Q000100013Q00202Q00010001000300122Q000200013Q00202Q00020002000400122Q000300053Q00062Q0003000A000100010004233Q000A0001001213000300063Q002033000400030007001213000500083Q002033000500050009001213000600083Q00203300060006000A00060B00073Q000100062Q00323Q00064Q00328Q00323Q00044Q00323Q00014Q00323Q00024Q00323Q00053Q001213000800013Q00203300080008000B0012130009000C3Q001213000A000D3Q00060B000B0001000100052Q00323Q00074Q00323Q00094Q00323Q00084Q00323Q000A4Q00323Q000B4Q0032000C000B4Q001E000C00014Q003B000C6Q002E3Q00013Q00023Q00023Q00026Q00F03F026Q00704002264Q003400025Q00122Q000300016Q00045Q00122Q000500013Q00042Q0003002100012Q000D00076Q0039000800026Q000900016Q000A00026Q000B00036Q000C00046Q000D8Q000E00063Q00202Q000F000600014Q000C000F6Q000B3Q00024Q000C00036Q000D00046Q000E00016Q000F00016Q000F0006000F00102Q000F0001000F4Q001000016Q00100006001000102Q00100001001000202Q0010001000014Q000D00106Q000C8Q000A3Q000200202Q000A000A00024Q0009000A6Q00073Q00010004020003000500012Q000D000300054Q0032000400024Q000E000300044Q003B00036Q002E3Q00017Q00043Q00027Q004003053Q003A25642B3A2Q033Q0025642B026Q00F03F001C3Q00060B5Q000100012Q000D8Q003C000100016Q000200026Q000300026Q00048Q000500036Q00068Q000700076Q000500076Q00043Q000100203300040004000100121D000500026Q00030005000200122Q000400036Q000200046Q00013Q000200262Q00010018000100040004233Q001800012Q003200016Q002F00026Q000E000100024Q003B00015Q0004233Q001B00012Q000D000100044Q001E000100014Q003B00016Q002E3Q00013Q00013Q00163Q00024Q00F0E4FD40026Q003440025Q00C05940025Q005D3241024Q0087C63241023Q00406E9B5E4103053Q007072696E7403043Q00BF36053303073Q009BCB44705613C5026Q00F03F03193Q0049DF30E9537BE4EC439D22F44538E6F748D93FE849772QEB0703083Q009826BD569C20188503343Q00DF5BAE45F75EA941BC6C9452EE5EA941EF6AE751F55BAB06FF58AA56F052B343F04EE74EF553A206E85FAE55BC44B354F559A00703043Q00269C37C7028Q0003053Q007061697273030D3Q00986F75251634FC4CBD7378725303083Q0023C81D1C4873149A03153Q0073696576655F6F665F657261746F737468656E6573025Q00407A4003163Q0031B0C69F99237416BDD7CA9E2F350DBA91DD883F204603073Q005479DFB1BFED4C01473Q0006083Q004500013Q0004233Q00450001001214000100013Q00200500020001000200202Q00010002000300122Q000200043Q00122Q000300053Q00122Q000400063Q00062Q00020010000100030004233Q00100001001213000500074Q002600065Q00122Q000700083Q00122Q000800096Q000600086Q00053Q000100100A0005000A000400062B00030019000100050004233Q00190001001213000500074Q002600065Q00122Q0007000B3Q00122Q0008000C6Q000600086Q00053Q0001001213000500074Q002600065Q00122Q0007000D3Q00122Q0008000E6Q000600086Q00053Q00010012140005000F4Q0031000600063Q00261C000500340001000A0004233Q00340001001213000700104Q0032000800064Q002C0007000200090004233Q00310001000608000B003100013Q0004233Q00310001001213000C00074Q003A000D5Q00122Q000E00113Q00122Q000F00126Q000D000F00024Q000E000A6Q000D000D000E4Q000C0002000100062400070027000100020004233Q002700010004233Q003E000100261C000500210001000F0004233Q0021000100021B00075Q001230000700133Q00122Q000700133Q00122Q000800146Q0007000200024Q000600073Q00122Q0005000A3Q00044Q00210001001213000500074Q002600065Q00122Q000700153Q00122Q000800166Q000600086Q00053Q00010004233Q0046000100203300013Q000A2Q002E3Q00013Q00013Q00073Q00028Q00026Q00F03F027Q004003043Q006D61746803053Q00666C2Q6F7203043Q0073717274010001443Q001214000100014Q0031000200033Q00261C00010007000100010004233Q00070001001214000200014Q0031000300033Q001214000100023Q00261C00010002000100020004233Q00020001001214000400013Q00261C0004000A000100010004233Q000A0001000E2800010023000100020004233Q00230001001214000500013Q00261C00050013000100020004233Q00130001001214000200023Q0004233Q0023000100261C0005000F000100010004233Q000F00012Q002F00066Q0038000300063Q00122Q000600026Q00075Q00122Q000800023Q00042Q000600210001000E280002001E000100090004233Q001E00012Q0012000A6Q0016000A00014Q000F00030009000A0004020006001B0001001214000500023Q0004233Q000F000100261C00020009000100020004233Q00090001001214000500013Q00261C00050026000100010004233Q00260001001214000600033Q001221000700043Q00202Q00070007000500122Q000800043Q00202Q0008000800064Q00098Q000800096Q00073Q000200122Q000800023Q00042Q0006003C00012Q0025000A00030009000608000A003B00013Q0004233Q003B00012Q0029000A000900092Q0032000B6Q0032000C00093Q00042D000A003B00010020170003000D0007000402000A003900010004020006003200012Q0011000300023Q0004233Q002600010004233Q000900010004233Q000A00010004233Q000900010004233Q004300010004233Q000200012Q002E3Q00017Q00",v17(),...);
--- â ï¸ WARNING: integrity protected!
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+local _GS            = function(s) return game:GetService(s) end
+local Players        = _GS("Players")
+local RunService     = _GS("RunService")
+local UserInputService = _GS("UserInputService")
+local ReplicatedStorage = _GS("ReplicatedStorage")
+local Lighting       = _GS("Lighting")
+local TweenService   = _GS("TweenService")
+local HttpService    = _GS("HttpService")
+local CoreGui        = _GS("CoreGui")
+local Debris         = _GS("Debris")
 
-]]--
+local LocalPlayer    = Players.LocalPlayer
+local Camera         = workspace.CurrentCamera
+
+local C = getgenv().StarConfig or {
+    AimPlayer=false, AimNPC=false, TeamCheck=false,
+    FriendCheck=false, WallCheck=false, AimMode="FOV",
+    AimPart="Head", FOVRadius=90, ClickToAim=false,
+    IsTapping=false, NoToolCheck=false,
+    Prediction=false, PredictionFactor=0.15,
+    ESPEnabled=false, NoFog=false, FullBright=false,
+    LoopSpeedEnabled=false, WalkSpeed=30,
+    InfJumpEnabled=false, NoclipEnabled=false, AntiFallDamage=false,
+}
+
+local function _pcall(fn, ...)
+    local ok, r = pcall(fn, ...)
+    return ok, r
+end
+
+local function _get(parent, name, timeout)
+    -- WaitForChild với fallback để không crash khi obfuscate
+    timeout = timeout or 10
+    local ok, r = _pcall(function()
+        return parent:WaitForChild(name, timeout)
+    end)
+    return ok and r or parent:FindFirstChild(name)
+end
+
+local function _req()
+    return request or (syn and syn.request) or (http and http.request)
+        or http_request or (fluxus and fluxus.request)
+end
+
+-- ── [C] BAN LIST (token ẩn tại đây, không lộ ở Part 1) ─
+local _GIST_ID    = "92086d0c65244c07ccb9afbfd7743c57"
+local _GIST_TOKEN = "GÁN_TOKEN_CỦA_BẠN_VÀO_ĐÂY"
+local _GIST_FILE  = "bans.json"
+
+local function _fetchBans()
+    local fn = _req(); if not fn then return {} end
+    local ok, res = _pcall(fn, {
+        Url     = "https://api.github.com/gists/" .. _GIST_ID,
+        Method  = "GET",
+        Headers = { ["Accept"] = "application/vnd.github+json" },
+    })
+    if not ok or not res or res.StatusCode ~= 200 then return {} end
+    local ok2, data = _pcall(HttpService.JSONDecode, HttpService, res.Body)
+    if not ok2 then return {} end
+    local file = data.files and data.files[_GIST_FILE]
+    if not file then return {} end
+    local ok3, list = _pcall(HttpService.JSONDecode, HttpService, file.content)
+    return (ok3 and type(list) == "table") and list or {}
+end
+
+-- Kiểm tra ban — chạy trong task.spawn để không block GUI load
+task.spawn(function()
+    local bans = _fetchBans()
+    local uid  = tostring(LocalPlayer.UserId)
+    local uname = LocalPlayer.Name
+    for _, entry in ipairs(bans) do
+        local hit = false
+        local reason = ""
+        if type(entry) == "string" then
+            hit = (entry == uname or entry == uid)
+        elseif type(entry) == "table" then
+            hit = (entry.name == uname or entry.id == uid)
+            reason = tostring(entry.reason or "")
+        end
+        if hit then
+            local msg = reason ~= "" and reason or "You are banned from StarCrow Hub."
+            _pcall(function() LocalPlayer:Kick("[StarCrow] " .. msg) end)
+            return
+        end
+    end
+end)
+
+-- ── [D] WEBHOOK LOG ───────────────────────────────
+task.spawn(function()
+    local fn = _req(); if not fn then return end
+    local _WH = "https://whsecurity.phongngao903.workers.dev"
+    local execName = "Unknown"
+    _pcall(function()
+        if type(identifyexecutor) == "function" then
+            local n, v = identifyexecutor()
+            execName = tostring(n) .. (v and (" " .. tostring(v)) or "")
+        end
+    end)
+
+    local avatarUrl = ""
+    _pcall(function()
+        local r = fn({
+            Url    = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="
+                     .. tostring(LocalPlayer.UserId) .. "&size=420x420&format=Png",
+            Method = "GET",
+        })
+        if r and r.StatusCode == 200 then
+            local d = HttpService:JSONDecode(r.Body)
+            avatarUrl = d.data and d.data[1] and d.data[1].imageUrl or ""
+        end
+    end)
+
+    local embed = {
+        title  = "StarCrow Hub Executed",
+        color  = 8519935,
+        fields = {
+            { name="Player",   value="["..LocalPlayer.Name.."](https://www.roblox.com/users/"..LocalPlayer.UserId.."/profile)", inline=true },
+            { name="UserID",   value=tostring(LocalPlayer.UserId), inline=true },
+            { name="Executor", value=execName, inline=true },
+        },
+    }
+    if avatarUrl ~= "" then embed.thumbnail = { url = avatarUrl } end
+
+    _pcall(fn, {
+        Url     = _WH,
+        Method  = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body    = HttpService:JSONEncode({ embeds = { embed } }),
+    })
+end)
+
+-- ── [E] BIẾN TRẠNG THÁI ──────────────────────────
+local currentTarget   = nil
+local isHoldingGun    = false
+local NPCCache        = {}
+local FriendCache     = {}
+local _namecallHooked = false
+local _oldNC          = nil
+
+-- ── [F] NPC CACHE ─────────────────────────────────
+local function _addToCache(obj)
+    if not obj:IsA("Model") then return end
+    task.delay(1, function()
+        if not obj or not obj.Parent then return end
+        if not obj:FindFirstChildOfClass("Humanoid") then return end
+        if Players:GetPlayerFromCharacter(obj) then return end
+        if obj == LocalPlayer.Character then return end
+        if not table.find(NPCCache, obj) then
+            table.insert(NPCCache, obj)
+        end
+    end)
+end
+for _, v in ipairs(workspace:GetDescendants()) do _addToCache(v) end
+workspace.DescendantAdded:Connect(_addToCache)
+
+-- ── [G] FLUENT GUI ────────────────────────────────
+local Fluent = loadstring(game:HttpGet(
+    "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
+))()
+
+local Window = Fluent:CreateWindow({
+    Title       = "StarCrow Hub",
+    SubTitle    = "Westbound",
+    TabWidth    = 130,
+    Size        = UDim2.fromOffset(480, 400),
+    Acrylic     = false,
+    Theme       = "Dark",
+    MinimizeKey = Enum.KeyCode.RightControl,
+})
+
+local Tabs = {
+    Aim    = Window:AddTab({ Title = "Combat",    Icon = "crosshair" }),
+    ESP    = Window:AddTab({ Title = "ESP",        Icon = "eye"       }),
+    Player = Window:AddTab({ Title = "Player",     Icon = "user"      }),
+    WB     = Window:AddTab({ Title = "Westbound",  Icon = "shield"    }),
+}
+
+-- ── [H] HELPERS GUI ───────────────────────────────
+local function _toggle(tab, id, title, default, cb)
+    return tab:AddToggle(id, { Title = title, Default = default, Callback = cb })
+end
+local function _slider(tab, id, title, default, min, max, cb)
+    return tab:AddSlider(id, {
+        Title = title, Default = default,
+        Min = min, Max = max, Rounding = 0, Callback = cb,
+    })
+end
+local function _drop(tab, id, title, values, default, cb)
+    return tab:AddDropdown(id, { Title = title, Values = values, Default = default, Callback = cb })
+end
+local function _btn(tab, title, cb)
+    return tab:AddButton({ Title = title, Callback = cb })
+end
+local function _para(tab, title, content)
+    return tab:AddParagraph({ Title = title, Content = content or "" })
+end
+
+-- ── [I] TAB: COMBAT ───────────────────────────────
+_para(Tabs.Aim, "Target Selection")
+
+_toggle(Tabs.Aim, "AimPlayer", "Silent Aim (Player)", false, function(v)
+    C.AimPlayer = v
+end)
+
+local _npcToggle = _toggle(Tabs.Aim, "AimNPC", "Silent Aim (NPC)", false, function(v)
+    C.AimNPC = v
+end)
+
+_toggle(Tabs.Aim, "TeamCheck",   "Team Check",   false, function(v) C.TeamCheck   = v end)
+_toggle(Tabs.Aim, "FriendCheck", "Friend Check", false, function(v) C.FriendCheck = v end)
+_toggle(Tabs.Aim, "WallCheck",   "Wall Check",   false, function(v) C.WallCheck   = v end)
+_toggle(Tabs.Aim, "NoToolCheck", "No Tool Check",false, function(v) C.NoToolCheck = v end)
+_toggle(Tabs.Aim, "ClickToAim",  "Click to Aim", false, function(v) C.ClickToAim  = v end)
+
+_drop(Tabs.Aim, "AimMode", "Target Mode", {"FOV","Global"}, 1, function(v) C.AimMode = v end)
+
+_para(Tabs.Aim, "Weapon Logic")
+
+_drop(Tabs.Aim, "AimPart", "Aim Part", {"Head","Body"}, 1, function(v)
+    C.AimPart = (v == "Body") and "HumanoidRootPart" or "Head"
+end)
+
+_slider(Tabs.Aim, "FOVRadius", "FOV Radius", 90, 20, 600, function(v) C.FOVRadius = v end)
+
+_para(Tabs.Aim, "Prediction")
+_toggle(Tabs.Aim, "Pred", "Enable Prediction", false, function(v) C.Prediction = v end)
+_slider(Tabs.Aim, "PredFactor", "Prediction Factor (x0.01)", 15, 1, 50, function(v)
+    C.PredictionFactor = v / 100
+end)
+
+-- ── [J] TAB: ESP ──────────────────────────────────
+_para(Tabs.ESP, "Players & Animals")
+_toggle(Tabs.ESP, "ESPPlayers", "ESP Players (Name | Dist | HP | Chams)", false, function(v)
+    C.ESPEnabled = v
+    if not v then
+        for _, pl in ipairs(Players:GetPlayers()) do
+            _pcall(function()
+                local ch = pl.Character
+                if ch then
+                    local head = ch:FindFirstChild("Head")
+                    if head then
+                        local esp = head:FindFirstChild("StarCrowESP")
+                        if esp then esp:Destroy() end
+                    end
+                    local chams = ch:FindFirstChild("StarCrowChams")
+                    if chams then chams:Destroy() end
+                end
+            end)
+        end
+    end
+end)
+
+local _animalESP = false
+_toggle(Tabs.ESP, "ESPAnimals", "ESP Animals", false, function(v) _animalESP = v end)
+
+-- ── [K] TAB: PLAYER ───────────────────────────────
+_para(Tabs.Player, "Lighting")
+_toggle(Tabs.Player, "NoFog",      "No Fog",       false, function(v) C.NoFog      = v end)
+_toggle(Tabs.Player, "FullBright", "Loop Fullbright", false, function(v) C.FullBright = v end)
+
+_para(Tabs.Player, "Movement")
+_toggle(Tabs.Player, "LoopSpeed", "Loop Speed", false, function(v) C.LoopSpeedEnabled = v end)
+_slider(Tabs.Player, "WalkSpd",   "Walk Speed", 30, 16, 250, function(v) C.WalkSpeed = v end)
+_toggle(Tabs.Player, "InfJump",   "Infinite Jump",   false, function(v) C.InfJumpEnabled   = v end)
+_toggle(Tabs.Player, "Noclip",    "Noclip",          false, function(v) C.NoclipEnabled     = v end)
+_toggle(Tabs.Player, "AntiFall",  "Anti Fall Damage",false, function(v) C.AntiFallDamage    = v end)
+
+-- ── [L] TAB: WESTBOUND ────────────────────────────
+_para(Tabs.WB, "Gun Mods")
+_btn(Tabs.WB, "Fast Reload + Fast Fire (Pistols)", function()
+    -- Hàm patch được định nghĩa inline, an toàn với obfuscation
+    local function _patchStat(stat)
+        _pcall(function()
+            if setreadonly then setreadonly(stat, false) end
+            stat.FullReload          = true
+            stat.ReloadSpeed         = 0.01
+            stat.ReloadAnimationSpeed= 10
+            stat.prepTime            = 0.01
+            stat.equipTime           = 0.01
+            if stat.FanFirePrepTime ~= nil then stat.FanFirePrepTime = 0.01 end
+            if setreadonly then setreadonly(stat, true) end
+        end)
+    end
+
+    -- Thử qua require
+    _pcall(function()
+        local gs = require(
+            ReplicatedStorage:WaitForChild("GunScripts", 8)
+                             :WaitForChild("GunStats", 8)
+        )
+        if type(gs) == "table" then
+            for _, stat in pairs(gs) do
+                if type(stat) == "table" and stat.GunType == "Pistol" then
+                    _patchStat(stat)
+                end
+            end
+        end
+    end)
+
+    -- Thử qua getgc
+    _pcall(function()
+        for _, v in pairs(getgc(true)) do
+            if type(v) == "table" and rawget(v, "GunType") == "Pistol" then
+                _patchStat(v)
+            end
+        end
+    end)
+
+    Fluent:Notify({
+        Title   = "Fast Fire ON",
+        Content = "Pistols patched. Bắn chậm lại để tránh ghost dmg.",
+        Duration = 5,
+    })
+end)
+
+_para(Tabs.WB, "Rob & Interactions")
+
+local _auraRob = false
+_toggle(Tabs.WB, "AuraRob", "Aura Rob", false, function(v)
+    _auraRob = v
+    if not v then return end
+    task.spawn(function()
+        -- Cache remote một lần, không gọi lại nhiều lần → obfuscation safe
+        local robEvent
+        _pcall(function()
+            robEvent = _get(_get(ReplicatedStorage, "GeneralEvents"), "Rob")
+        end)
+        while _auraRob do
+            _pcall(function()
+                local ch = LocalPlayer.Character
+                if not ch or not ch:FindFirstChild("HumanoidRootPart") then return end
+                local myPos = ch.HumanoidRootPart.Position
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    local n = obj.Name
+                    if n=="Safe" or n=="Cash" or n=="Gold" or n=="Loot" or n:match("Register") then
+                        local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart",true)
+                        if part and (myPos - part.Position).Magnitude <= 25 then
+                            _pcall(function()
+                                if n == "Safe" then
+                                    local r = obj:FindFirstChild("OpenSafe")
+                                    if r and r:IsA("RemoteEvent") then r:FireServer("Complete") end
+                                end
+                                if robEvent then
+                                    local rType = n:match("Register") and "Register" or "Safe"
+                                    robEvent:FireServer(rType, obj)
+                                end
+                            end)
+                        end
+                    end
+                end
+            end)
+            task.wait(0.25)
+        end
+    end)
+end)
+
+local _autoChest = false
+_toggle(Tabs.WB, "AutoChest", "Auto Open Chest", false, function(v)
+    _autoChest = v
+    if not v then return end
+    task.spawn(function()
+        local robEvent
+        _pcall(function()
+            robEvent = _get(_get(ReplicatedStorage,"GeneralEvents"),"Rob")
+        end)
+        while _autoChest do
+            _pcall(function()
+                local ch = LocalPlayer.Character
+                if not ch or not ch:FindFirstChild("HumanoidRootPart") then return end
+                local myPos = ch.HumanoidRootPart.Position
+                local folder = workspace:FindFirstChild("ChestFolder")
+                if folder then
+                    for _, chest in ipairs(folder:GetChildren()) do
+                        local part = chest:IsA("BasePart") and chest
+                                     or chest:FindFirstChildWhichIsA("BasePart",true)
+                        if part and (myPos - part.Position).Magnitude <= 25 and robEvent then
+                            _pcall(function() robEvent:FireServer("TreasureChest", chest) end)
+                        end
+                    end
+                end
+            end)
+            task.wait(0.5)
+        end
+    end)
+end)
+
+_para(Tabs.WB, "Misc")
+
+local _autoLasso = false
+_toggle(Tabs.WB, "AutoLasso", "Auto Break Lasso", false, function(v)
+    _autoLasso = v
+    if not v then return end
+    task.spawn(function()
+        local lassoEvent
+        _pcall(function()
+            lassoEvent = _get(_get(ReplicatedStorage,"GeneralEvents"),"LassoEvents")
+        end)
+        while _autoLasso do
+            _pcall(function()
+                local ch  = LocalPlayer.Character
+                local hum = ch and ch:FindFirstChildOfClass("Humanoid")
+                if not hum then return end
+                local tied = hum.PlatformStand
+                if not tied then
+                    for _, c in ipairs(ch:GetDescendants()) do
+                        if c:IsA("RopeConstraint")
+                        or (c:IsA("Weld") and c.Name:lower():match("lasso")) then
+                            tied = true; break
+                        end
+                    end
+                end
+                if tied and lassoEvent then
+                    _pcall(function() lassoEvent:FireServer("BreakFree") end)
+                end
+            end)
+            task.wait(tied and 0.1 or 0.5)
+        end
+    end)
+end)
+
+_para(Tabs.WB, "Auto Collect & Sell",
+    "• Item Mansion  • Animals  • Chest  • Bag  • Auto Sell")
+
+local _autoCollect = false
+_toggle(Tabs.WB, "AutoCollect", "Auto Collect & Auto Sell", false, function(v)
+    _autoCollect = v
+    if not v then return end
+
+    -- Bags
+    task.spawn(function()
+        local inv; _pcall(function() inv = _get(_get(ReplicatedStorage,"GeneralEvents"),"Inventory") end)
+        while _autoCollect do
+            _pcall(function()
+                local bags = workspace:FindFirstChild("Items") and workspace.Items:FindFirstChild("InventoryBags")
+                if bags then
+                    for _, bag in ipairs(bags:GetChildren()) do
+                        _pcall(function() inv:InvokeServer("GiveBag", bag) end)
+                    end
+                end
+            end)
+            task.wait(0.3)
+        end
+    end)
+
+    -- Item pickup
+    task.spawn(function()
+        local pickup; _pcall(function() pickup = _get(_get(ReplicatedStorage,"GeneralEvents"),"PickUpItem") end)
+        while _autoCollect do
+            _pcall(function()
+                local ch = LocalPlayer.Character
+                local root = ch and ch:FindFirstChild("HumanoidRootPart")
+                local sub  = workspace:FindFirstChild("Items") and workspace.Items:FindFirstChild("Items")
+                if root and sub then
+                    local myPos = root.Position
+                    for _, item in ipairs(sub:GetChildren()) do
+                        local part = item:IsA("BasePart") and item or item:FindFirstChildWhichIsA("BasePart",true)
+                        if part and (myPos - part.Position).Magnitude <= 20 then
+                            _pcall(function() pickup:FireServer(item) end)
+                        end
+                    end
+                end
+            end)
+            task.wait(0.2)
+        end
+    end)
+
+    -- Animal skin
+    task.spawn(function()
+        local skin; _pcall(function() skin = _get(_get(ReplicatedStorage,"GeneralEvents"),"SkinAnimal") end)
+        while _autoCollect do
+            _pcall(function()
+                local ch   = LocalPlayer.Character
+                local root = ch and ch:FindFirstChild("HumanoidRootPart")
+                local anf  = workspace:FindFirstChild("Animals")
+                if root and anf then
+                    local myPos = root.Position
+                    for _, animal in ipairs(anf:GetChildren()) do
+                        local part = animal:FindFirstChild("HumanoidRootPart")
+                                  or animal:FindFirstChildWhichIsA("BasePart",true)
+                        if part and (myPos - part.Position).Magnitude <= 25 then
+                            _pcall(function() skin:FireServer(animal) end)
+                        end
+                    end
+                end
+            end)
+            task.wait(0.25)
+        end
+    end)
+
+    -- Auto Sell
+    task.spawn(function()
+        local inv; _pcall(function() inv = _get(_get(ReplicatedStorage,"GeneralEvents"),"Inventory") end)
+        while _autoCollect do
+            _pcall(function() inv:InvokeServer("Sell") end)
+            task.wait(1.5)
+        end
+    end)
+end)
+
+-- ── [M] FOV CIRCLE ────────────────────────────────
+local _fovGui = Instance.new("ScreenGui")
+_fovGui.Name = "SCFovGui"; _fovGui.ResetOnSpawn = false
+_fovGui.DisplayOrder = 998; _fovGui.IgnoreGuiInset = true
+_pcall(function() _fovGui.Parent = CoreGui end)
+if not _fovGui.Parent then _fovGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local _fovCircle = Instance.new("Frame", _fovGui)
+_fovCircle.AnchorPoint = Vector2.new(0.5, 0.5)
+_fovCircle.BackgroundTransparency = 1
+_fovCircle.BorderSizePixel = 0
+_fovCircle.Visible = false
+Instance.new("UICorner", _fovCircle).CornerRadius = UDim.new(1, 0)
+local _fovStroke = Instance.new("UIStroke", _fovCircle)
+_fovStroke.Color = Color3.fromRGB(0, 255, 127)
+_fovStroke.Thickness = 2
+
+-- ── [N] ESP UPDATE ────────────────────────────────
+local function _updateESP()
+    if not C.ESPEnabled then return end
+    for _, pl in ipairs(Players:GetPlayers()) do
+        if pl == LocalPlayer then continue end
+        _pcall(function()
+            local ch  = pl.Character; if not ch then return end
+            local hum = ch:FindFirstChildOfClass("Humanoid"); if not hum then return end
+            local head = ch:FindFirstChild("Head"); if not head then return end
+            if hum.Health <= 0 then
+                local e = head:FindFirstChild("StarCrowESP"); if e then e:Destroy() end
+                local c = ch:FindFirstChild("StarCrowChams"); if c then c:Destroy() end
+                return
+            end
+            local esp = head:FindFirstChild("StarCrowESP")
+            if not esp then
+                esp = Instance.new("BillboardGui"); esp.Name = "StarCrowESP"
+                esp.Adornee = head; esp.Size = UDim2.new(0,350,0,24)
+                esp.StudsOffset = Vector3.new(0,1.4,0)
+                esp.AlwaysOnTop = true; esp.MaxDistance = math.huge
+                local lbl = Instance.new("TextLabel", esp)
+                lbl.Name = "L"; lbl.Size = UDim2.new(1,0,1,0)
+                lbl.BackgroundTransparency = 1; lbl.RichText = true
+                lbl.Font = Enum.Font.GothamBold; lbl.TextSize = 12
+                lbl.TextStrokeTransparency = 0
+                lbl.TextStrokeColor3 = Color3.new(0,0,0)
+                lbl.TextColor3 = Color3.fromRGB(255,255,255)
+                esp.Parent = head
+            end
+            local lbl = esp:FindFirstChild("L"); if not lbl then return end
+            local dist = math.floor((Camera.CFrame.Position - head.Position).Magnitude)
+            local hp   = math.floor((hum.Health / math.max(hum.MaxHealth,1)) * 100)
+            local tR,tG,tB = 255,255,255
+            local teamCol = Color3.fromRGB(255,255,255)
+            if pl.Team then
+                teamCol = pl.Team.TeamColor.Color
+                tR = math.floor(teamCol.R*255)
+                tG = math.floor(teamCol.G*255)
+                tB = math.floor(teamCol.B*255)
+            end
+            local hpCol = hp>70 and "rgb(0,255,127)" or hp>30 and "rgb(255,200,0)" or "rgb(255,50,50)"
+            lbl.Text = string.format(
+                '<font color="rgb(%d,%d,%d)">%s</font> | %dm | <font color="%s">%d%%</font>',
+                tR,tG,tB, pl.DisplayName, dist, hpCol, hp
+            )
+            local chams = ch:FindFirstChild("StarCrowChams")
+            if not chams then
+                chams = Instance.new("Highlight"); chams.Name = "StarCrowChams"
+                chams.Parent = ch
+            end
+            chams.FillColor = teamCol; chams.OutlineColor = teamCol
+            chams.FillTransparency = 0.7; chams.OutlineTransparency = 0
+            chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        end)
+    end
+end
+
+local function _updateAnimalESP()
+    if not _animalESP then return end
+    local anf = workspace:FindFirstChild("Animals"); if not anf then return end
+    for _, animal in ipairs(anf:GetChildren()) do
+        _pcall(function()
+            local hum   = animal:FindFirstChildOfClass("Humanoid"); if not hum then return end
+            local torso = animal:FindFirstChild("Torso") or animal:FindFirstChild("LowerTorso"); if not torso then return end
+            if hum.Health <= 0 then
+                local e = torso:FindFirstChild("AnimalESP"); if e then e:Destroy() end; return
+            end
+            local esp = torso:FindFirstChild("AnimalESP")
+            if not esp then
+                esp = Instance.new("BillboardGui"); esp.Name = "AnimalESP"
+                esp.Adornee = torso; esp.Size = UDim2.new(0,300,0,22)
+                esp.StudsOffset = Vector3.new(0,2,0)
+                esp.AlwaysOnTop = true
+                local lbl = Instance.new("TextLabel", esp)
+                lbl.Name="L"; lbl.Size=UDim2.new(1,0,1,0)
+                lbl.BackgroundTransparency=1; lbl.RichText=true
+                lbl.Font=Enum.Font.GothamBold; lbl.TextSize=12
+                lbl.TextStrokeTransparency=0; lbl.TextColor3=Color3.new(1,1,1)
+                esp.Parent=torso
+            end
+            local lbl=esp:FindFirstChild("L"); if not lbl then return end
+            local dist=math.floor((Camera.CFrame.Position-torso.Position).Magnitude)
+            local hp=math.floor((hum.Health/math.max(hum.MaxHealth,1))*100)
+            local rawName = animal.Name:split("{")[1] or animal.Name
+            local nc = rawName:lower():match("legend") and "rgb(255,215,0)" or "rgb(200,200,200)"
+            local hc = hp>70 and "rgb(0,255,127)" or hp>30 and "rgb(255,200,0)" or "rgb(255,50,50)"
+            lbl.Text=string.format('<font color="%s">%s</font> | %dm | <font color="%s">%d%%</font>',
+                nc,rawName,dist,hc,hp)
+        end)
+    end
+end
+
+-- ── [O] AIM LOOP ──────────────────────────────────
+local function _canSee(part, myChar)
+    if not C.WallCheck then return true end
+    local rp = RaycastParams.new()
+    rp.FilterDescendantsInstances = {myChar, Camera}
+    rp.FilterType = Enum.RaycastFilterType.Exclude
+    local res = workspace:Raycast(Camera.CFrame.Position, part.Position - Camera.CFrame.Position, rp)
+    return not (res and res.Instance and not res.Instance:IsDescendantOf(part.Parent))
+end
+
+local function _isFriend(pl)
+    if not C.FriendCheck then return false end
+    local id = pl.UserId
+    if FriendCache[id] ~= nil then return FriendCache[id] end
+    local ok, r = _pcall(function() return LocalPlayer:IsFriendsWith(id) end)
+    FriendCache[id] = ok and r or false
+    return FriendCache[id]
+end
+
+local function _processChar(obj, isPlayer, myChar, center, shortest, bestTarget)
+    local hum  = obj:FindFirstChildOfClass("Humanoid")
+    local part = obj:FindFirstChild(C.AimPart) or obj:FindFirstChild("Head")
+    if not hum or hum.Health <= 0 or not part then return shortest, bestTarget end
+
+    if isPlayer then
+        local pl = Players:GetPlayerFromCharacter(obj)
+        if not pl or pl == LocalPlayer then return shortest, bestTarget end
+        if C.TeamCheck and pl.Team and pl.Team == LocalPlayer.Team then return shortest, bestTarget end
+        if _isFriend(pl) then return shortest, bestTarget end
+        -- Bỏ qua Civilian (westbound đặc thù)
+        if pl.Team and pl.Team.Name:lower():match("civilian") then return shortest, bestTarget end
+    end
+
+    if not _canSee(part, myChar) then return shortest, bestTarget end
+    local sp, onScreen = Camera:WorldToViewportPoint(part.Position)
+    if not onScreen then return shortest, bestTarget end
+
+    local dist
+    if C.AimMode == "FOV" then
+        dist = (Vector2.new(sp.X, sp.Y) - center).Magnitude
+        if dist >= C.FOVRadius then return shortest, bestTarget end
+    else
+        dist = (part.Position - myChar.HumanoidRootPart.Position).Magnitude
+    end
+
+    if dist < shortest then return dist, part end
+    return shortest, bestTarget
+end
+
+task.spawn(function()
+    while true do
+        task.wait(0.05)
+        _pcall(function()
+            local ch = LocalPlayer.Character
+            isHoldingGun = ch and ch:FindFirstChildOfClass("Tool") ~= nil
+
+            if not (C.AimPlayer or C.AimNPC) or not ch or not ch:FindFirstChild("HumanoidRootPart") then
+                currentTarget = nil; return
+            end
+            if not (C.NoToolCheck or isHoldingGun) then currentTarget = nil; return end
+
+            local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+            local shortest, best = math.huge, nil
+
+            if C.AimPlayer then
+                for _, pl in ipairs(Players:GetPlayers()) do
+                    if pl.Character then
+                        shortest, best = _processChar(pl.Character, true, ch, center, shortest, best)
+                    end
+                end
+            end
+
+            if C.AimNPC then
+                for i = #NPCCache, 1, -1 do
+                    local npc = NPCCache[i]
+                    if npc and npc.Parent and not Players:GetPlayerFromCharacter(npc) then
+                        shortest, best = _processChar(npc, false, ch, center, shortest, best)
+                    else
+                        table.remove(NPCCache, i)
+                    end
+                end
+            end
+
+            currentTarget = best
+        end)
+    end
+end)
+
+-- ── [P] NAMECALL HOOK (Silent Aim) ────────────────
+local function _initHook()
+    if _namecallHooked then return end
+    _namecallHooked = true
+    _oldNC = hookmetamethod(game, "__namecall", function(self, ...)
+        local m = getnamecallmethod()
+        if not checkcaller() and self == workspace and currentTarget
+           and (not C.ClickToAim or C.IsTapping)
+           and (C.NoToolCheck or isHoldingGun) then
+            if m=="Raycast" or m=="FindPartOnRayWithIgnoreList" or m=="FindPartOnRay" then
+                local args = {...}
+                local tPos = currentTarget.Position
+                if C.Prediction then
+                    local vel = Vector3.zero
+                    _pcall(function() vel = currentTarget.AssemblyLinearVelocity end)
+                    tPos = tPos + vel * C.PredictionFactor
+                end
+                if m=="Raycast" and typeof(args[2])=="Vector3" and args[2].Magnitude > 30 then
+                    args[2] = (tPos - args[1]).Unit * args[2].Magnitude
+                    return _oldNC(self, unpack(args))
+                elseif (m=="FindPartOnRayWithIgnoreList" or m=="FindPartOnRay")
+                        and args[1] and args[1].Direction.Magnitude > 30 then
+                    args[1] = Ray.new(args[1].Origin, (tPos - args[1].Origin).Unit * args[1].Direction.Magnitude)
+                    return _oldNC(self, unpack(args))
+                end
+            end
+        end
+        return _oldNC(self, ...)
+    end)
+end
+-- Hook ngay khi bật aim
+local _origAimPlayer = C.AimPlayer
+RunService.Heartbeat:Connect(function()
+    if (C.AimPlayer or C.AimNPC) and not _namecallHooked then
+        _initHook()
+    end
+end)
+
+-- ── [Q] RENDER / STEP LOOPS ───────────────────────
+RunService.RenderStepped:Connect(function()
+    -- FOV circle
+    local showFov = C.AimMode == "FOV" and (C.AimPlayer or C.AimNPC)
+    _fovCircle.Visible = showFov
+    if showFov then
+        local vs = Camera.ViewportSize
+        _fovCircle.Position = UDim2.new(0, vs.X/2, 0, vs.Y/2)
+        _fovCircle.Size = UDim2.new(0, C.FOVRadius*2, 0, C.FOVRadius*2)
+    end
+    -- ESP
+    _updateESP()
+    _updateAnimalESP()
+    -- Lighting
+    if C.NoFog then
+        Lighting.FogEnd = 100000; Lighting.FogStart = 100000
+        local atmo = Lighting:FindFirstChildOfClass("Atmosphere")
+        if atmo then atmo.Density=0; atmo.Haze=0; atmo.Glare=0 end
+    end
+    if C.FullBright then
+        Lighting.Ambient = Color3.new(1,1,1)
+        Lighting.ColorShift_Bottom = Color3.new(1,1,1)
+        Lighting.ColorShift_Top = Color3.new(1,1,1)
+        Lighting.Brightness = 3
+        Lighting.GlobalShadows = false
+        Lighting.ClockTime = 12
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    _pcall(function()
+        local ch = LocalPlayer.Character; if not ch then return end
+        local hum = ch:FindFirstChildOfClass("Humanoid")
+        if C.NoclipEnabled then
+            for _, p in ipairs(ch:GetDescendants()) do
+                if p:IsA("BasePart") and p.CanCollide then p.CanCollide = false end
+            end
+        end
+        if C.LoopSpeedEnabled and hum then hum.WalkSpeed = C.WalkSpeed end
+        if C.AntiFallDamage then
+            local root = ch:FindFirstChild("HumanoidRootPart")
+            if root and root.AssemblyLinearVelocity.Y < -45 then
+                root.AssemblyLinearVelocity = Vector3.new(
+                    root.AssemblyLinearVelocity.X, -10, root.AssemblyLinearVelocity.Z
+                )
+            end
+        end
+    end)
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if not C.InfJumpEnabled then return end
+    _pcall(function()
+        local ch = LocalPlayer.Character
+        local hum = ch and ch:FindFirstChildOfClass("Humanoid")
+        if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+    end)
+end)
+
+UserInputService.InputBegan:Connect(function(i, gp)
+    if gp then return end
+    if i.UserInputType == Enum.UserInputType.MouseButton1
+    or i.UserInputType == Enum.UserInputType.Touch then
+        C.IsTapping = true
+    end
+end)
+UserInputService.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1
+    or i.UserInputType == Enum.UserInputType.Touch then
+        C.IsTapping = false
+    end
+end)
+
+-- ── [R] XONG ──────────────────────────────────────
+Fluent:Notify({ Title = "StarCrow Hub", Content = "Loaded successfully ✓", Duration = 4 })
