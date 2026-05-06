@@ -1,0 +1,52 @@
+if game.PlaceId ~= 2474168535 then
+    game:GetService("Players").LocalPlayer:Kick("Westbound only!")
+    return
+end
+
+local Players     = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+-- BAN LIST
+local function FetchBanList()
+    local ok, res = pcall(function()
+        return game:HttpGet("URL_BAN_JSON_CỦA_BẠN")
+    end)
+    if not ok then return {} end
+    local ok2, list = pcall(HttpService.JSONDecode, HttpService, res)
+    return (ok2 and type(list) == "table") and list or {}
+end
+
+local n, id = LocalPlayer.Name, tostring(LocalPlayer.UserId)
+for _, e in ipairs(FetchBanList()) do
+    local banned = (type(e)=="table" and (e.name==n or e.id==id))
+               or  (type(e)=="string" and (e==n or e==id))
+    if banned then
+        LocalPlayer:Kick((type(e)=="table" and e.reason~="") 
+            and "[StarCrowHub] Banned: "..e.reason 
+            or  "[StarCrowHub] You are banned.")
+        return
+    end
+end
+
+-- CONFIG
+getgenv()._SC_S = {
+    Config = {
+        AimPlayer=false, AimNPC=false, TeamCheck=false, FriendCheck=false,
+        WallCheck=false, AimMode="FOV", AimPart="Head", FOVRadius=90,
+        ClickToAim=false, IsTapping=false, NoToolCheck=false,
+        Prediction=false, PredictionFactor=0.15, ESPEnabled=false,
+        NoFog=false, FullBright=false, LoopSpeedEnabled=false,
+        WalkSpeed=30, InfJumpEnabled=false, NoclipEnabled=false,
+        AntiFallDamage=false,
+    }
+}
+getgenv().StarConfig = getgenv()._SC_S.Config
+
+-- FLUENT
+getgenv()._SC_Fluent = loadstring(game:HttpGet(
+    "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
+))()
+
+loadstring(game:HttpGet(""))()
+loadstring(game:HttpGet(""))()
