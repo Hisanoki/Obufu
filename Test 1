@@ -10,6 +10,7 @@ local HttpService = game:GetService("HttpService")
 -- BAN LIST
 local function FetchBanList()
     local ok, res = pcall(function()
+        -- Nhớ thay URL thực tế của file JSON Ban List vào đây nhé
         return game:HttpGet("URL_BAN_JSON_CỦA_BẠN")
     end)
     if not ok then return {} end
@@ -48,5 +49,23 @@ getgenv()._SC_Fluent = loadstring(game:HttpGet(
     "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
 ))()
 
-loadstring(game:HttpGet(""))()
-loadstring(game:HttpGet(""))()
+-- ================================================
+-- TRÌNH TẢI PART 2 VÀ PART 3 TỰ ĐỘNG
+-- ================================================
+local function LoadComponent(name, url)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+    if not success then
+        warn("[StarCrowHub] Lỗi khi tải " .. name .. ": " .. tostring(result))
+    end
+end
+
+-- 1. Gọi Part 2 (Core Logic) bằng link GitHub của bạn
+LoadComponent("Part 2 (Core)", "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%202")
+
+-- 2. Dừng 0.5 giây để đảm bảo Part 2 đã truyền hết hàm sang getgenv()
+task.wait(0.5) 
+
+-- 3. Gọi Part 3 (Fluent GUI) bằng link GitHub của bạn
+LoadComponent("Part 3 (GUI)", "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%203")
