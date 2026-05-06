@@ -1,0 +1,515 @@
+local S             = getgenv()._SC_S
+local Fluent        = getgenv()._SC_Fluent
+
+local Players           = game:GetService("Players")
+local UserInputService  = game:GetService("UserInputService")
+local RunService        = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting          = game:GetService("Lighting")
+local TweenService      = game:GetService("TweenService")
+local LocalPlayer       = Players.LocalPlayer
+local Camera            = workspace.CurrentCamera
+
+-- ──────────────────────────────────────────────
+--  SHARED STATE (Part 3 sẽ đọc)
+-- ──────────────────────────────────────────────
+local currentTarget      = nil
+local isHoldingGun       = false
+local NPCCache           = {}
+local FriendCache        = {}
+local ESPAnimalsEnabled  = false
+local isNamecallHooked   = false
+local oldNamecall
+
+-- Export sang getgenv để Part 3 có thể bind toggle
+getgenv()._SC_ESPAnimalsRef   = function(v) ESPAnimalsEnabled = v end
+getgenv()._SC_currentTarget   = function() return currentTarget end
+getgenv()._SC_SilentAimNPCRef = nil  -- Part 3 gán vào sau
+
+-- ──────────────────────────────────────────────
+--  NPC CACHE
+-- ──────────────────────────────────────────────
+local function AddToCache(obj)
+    if obj:IsA("Model") then
+        task.delay(1, function()
+            if obj and obj.Parent
+            and obj:FindFirstChildOfClass("Humanoid")
+            and (obj:FindFirstChild("Head") or obj:FindFirstChild("HumanoidRootPart"))
+            and not Players:GetPlayerFromCharacter(obj)
+            and obj ~= LocalPlayer.Character then
+                if not table.find(NPCCache, obj) then table.insert(NPCCache, obj) end
+            end
+        end)
+    end
+end
+for _, obj in ipairs(workspace:GetDescendants()) do AddToCache(obj) end
+workspace.DescendantAdded:Connect(AddToCache)
+
+-- ──────────────────────────────────────────────
+--  FOV CIRCLE GUI
+-- ──────────────────────────────────────────────
+local fovGui = Instance.new("ScreenGui")
+fovGui.Name = "StarCrowUI"; fovGui.ResetOnSpawn = false
+fovGui.DisplayOrder = 999; fovGui.IgnoreGuiInset = true
+pcall(function() fovGui.Parent = game:GetService("CoreGui") end)
+if not fovGui.Parent then fovGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local fovCircle = Instance.new("Frame")
+fovCircle.AnchorPoint = Vector2.new(0.5, 0.5)
+fovCircle.Position = UDim2.new(0.5, 0, 0.5, 0)
+fovCircle.BackgroundTransparency = 1
+fovCircle.BorderSizePixel = 0
+fovCircle.ClipsDescendants = true
+fovCircle.Visible = false
+fovCircle.Parent = fovGui
+Instance.new("UICorner", fovCircle).CornerRadius = UDim.new(1, 0)
+local strokeCircle = Instance.new("UIStroke", fovCircle)
+strokeCircle.Color = Color3.fromRGB(0, 255, 127); strokeCircle.Thickness = 2
+
+-- ──────────────────────────────────────────────
+--  LOGO GUI (draggable, toggle Fluent)
+-- ──────────────────────────────────────────────
+local LogoGui = Instance.new("ScreenGui")
+LogoGui.Name = "StarCrowLogoGui"; LogoGui.ResetOnSpawn = false; LogoGui.DisplayOrder = 10000
+pcall(function() LogoGui.Parent = game:GetService("CoreGui") end)
+if not LogoGui.Parent then LogoGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local LogoFrame = Instance.new("Frame")
+LogoFrame.Size = UDim2.new(0, 46, 0, 46)
+LogoFrame.Position = UDim2.new(0, 8, 0.5, -23)
+LogoFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
+LogoFrame.BorderSizePixel = 0; LogoFrame.Parent = LogoGui
+Instance.new("UICorner", LogoFrame).CornerRadius = UDim.new(0.2, 0)
+
+local logoStroke = Instance.new("UIStroke", LogoFrame)
+logoStroke.Thickness = 1.8; logoStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+local logoGrad = Instance.new("UIGradient", logoStroke)
+logoGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0,   Color3.fromRGB(130, 0, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 130, 255)),
+    ColorSequenceKeypoint.new(1,   Color3.fromRGB(130, 0, 255)),
+})
+task.spawn(function()
+    TweenService:Create(logoGrad, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {Rotation = 180}):Play()
+end)
+
+local LogoImg = Instance.new("ImageLabel")
+LogoImg.Size = UDim2.new(1, -6, 1, -6); LogoImg.Position = UDim2.new(0, 3, 0, 3)
+LogoImg.BackgroundTransparency = 1
+LogoImg.Image = "rbxthumb://type=Asset&id=115542332056889&w=150&h=150"
+LogoImg.ScaleType = Enum.ScaleType.Fit; LogoImg.Parent = LogoFrame
+
+local LogoBtn = Instance.new("TextButton")
+LogoBtn.Size = UDim2.new(1, 0, 1, 0); LogoBtn.BackgroundTransparency = 1
+LogoBtn.Text = ""; LogoBtn.ZIndex = 5; LogoBtn.Parent = LogoFrame
+
+do -- drag logo
+    local dr, di, ds, sp = false, nil, nil, nil
+    LogoBtn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+            dr = true; di = input; ds = input.Position; sp = LogoFrame.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dr and input == di then
+            local d = input.Position - ds
+            LogoFrame.Position = UDim2.new(sp.X.Scale, sp.X.Offset+d.X, sp.Y.Scale, sp.Y.Offset+d.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input == di then dr = false; di = nil end
+    end)
+end
+
+local function ToggleFluentUI(visible)
+    for _, g in ipairs(game:GetService("CoreGui"):GetChildren()) do
+        if g:IsA("ScreenGui") then
+            for _, desc in ipairs(g:GetDescendants()) do
+                if desc:IsA("TextLabel") and desc.Text == "StarCrowHub" then
+                    local p = desc.Parent
+                    while p and p.Parent ~= g do p = p.Parent end
+                    if p and p:IsA("Frame") then p.Visible = visible; return end
+                    break
+                end
+            end
+        end
+    end
+end
+local uiVisible = true
+LogoBtn.MouseButton1Click:Connect(function()
+    uiVisible = not uiVisible; ToggleFluentUI(uiVisible)
+end)
+
+-- ──────────────────────────────────────────────
+--  FLOAT BUTTONS (Aura, AimNPC)
+-- ──────────────────────────────────────────────
+local FloatGui = Instance.new("ScreenGui")
+FloatGui.Name = "StarCrowFloatGui"; FloatGui.ResetOnSpawn = false; FloatGui.DisplayOrder = 9999
+pcall(function() FloatGui.Parent = game:GetService("CoreGui") end)
+if not FloatGui.Parent then FloatGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local function CreateFloatButton(name, text, defaultPos)
+    local btn = Instance.new("TextButton")
+    btn.Name = name; btn.Size = UDim2.new(0, 50, 0, 50); btn.Position = defaultPos
+    btn.BackgroundColor3 = Color3.fromRGB(62, 62, 62); btn.BackgroundTransparency = 1
+    btn.AutoButtonColor = false; btn.Text = text; btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold; btn.TextSize = 13; btn.Visible = false; btn.Parent = FloatGui
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0.25, 0)
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Thickness = 1.6; stroke.Color = Color3.fromRGB(255, 255, 255)
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    local grad = Instance.new("UIGradient", stroke)
+    grad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(60, 0, 120)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 100, 200)),
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(60, 0, 120)),
+    })
+    task.spawn(function()
+        TweenService:Create(grad, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {Rotation = 180}):Play()
+    end)
+    local dr, di, ds, sp = false, nil, nil, nil
+    btn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+            dr = true; di = input; ds = input.Position; sp = btn.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dr and input == di then
+            local d = input.Position - ds
+            btn.Position = UDim2.new(sp.X.Scale, sp.X.Offset+d.X, sp.Y.Scale, sp.Y.Offset+d.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input == di then dr = false; di = nil end
+    end)
+    return btn, grad
+end
+
+local AuraBtn,   auraGrad = CreateFloatButton("AuraBtn",   "Aura",    UDim2.new(0.92, 0, 0.15, 0))
+local AimNPCBtn, aimGrad  = CreateFloatButton("AimNPCBtn", "Aim NPC", UDim2.new(0.82, 0, 0.15, 0))
+
+-- Export sang Part 3
+getgenv()._SC_AuraBtn  = AuraBtn
+getgenv()._SC_AimNPCBtn= AimNPCBtn
+getgenv()._SC_auraGrad = auraGrad
+getgenv()._SC_aimGrad  = aimGrad
+
+-- Aura float button logic
+local isRobbing = false
+AuraBtn.MouseButton1Click:Connect(function()
+    if isRobbing then return end
+    isRobbing = true; AuraBtn.Text = "..."
+    task.spawn(function()
+        local robRemote = ReplicatedStorage:WaitForChild("GeneralEvents",9e9):WaitForChild("Rob",9e9)
+        for _ = 1, 10 do
+            local char = LocalPlayer.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                local myPos = char.HumanoidRootPart.Position
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj.Name=="Safe" or obj.Name=="Cash" or obj.Name=="Gold"
+                    or obj.Name=="Loot" or string.match(obj.Name,"Register") then
+                        local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart",true)
+                        if part and (myPos-part.Position).Magnitude <= 25 then
+                            pcall(function()
+                                if obj.Name == "Safe" then
+                                    local r = obj:FindFirstChild("OpenSafe")
+                                    if r and r:IsA("RemoteEvent") then r:FireServer("Complete") end
+                                end
+                                local rt = string.match(obj.Name,"Register") and "Register" or "Safe"
+                                robRemote:FireServer(rt, obj)
+                            end)
+                        end
+                    end
+                end
+            end
+            task.wait(0.15)
+        end
+        AuraBtn.Text = "Aura"; isRobbing = false
+    end)
+end)
+
+AimNPCBtn.MouseButton1Click:Connect(function()
+    local toggle = getgenv()._SC_SilentAimNPCRef
+    if toggle then toggle:SetValue(not S.Config.AimNPC) end
+end)
+
+-- ──────────────────────────────────────────────
+--  ESP PLAYERS
+-- ──────────────────────────────────────────────
+local function updateESP()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local char = player.Character
+            if char then
+                local head = char:FindFirstChild("Head")
+                local hum  = char:FindFirstChild("Humanoid")
+                if head and hum then
+                    local esp   = head:FindFirstChild("StarCrowESP")
+                    local chams = char:FindFirstChild("StarCrowChams")
+                    if S.Config.ESPEnabled and hum.Health > 0 then
+                        if not esp then
+                            esp = Instance.new("BillboardGui")
+                            esp.Name = "StarCrowESP"; esp.Adornee = head
+                            esp.Size = UDim2.new(0, 350, 0, 30)
+                            esp.StudsOffset = Vector3.new(0, 1.2, 0)
+                            esp.AlwaysOnTop = true; esp.MaxDistance = math.huge
+                            local text = Instance.new("TextLabel")
+                            text.Name = "NameText"; text.Parent = esp
+                            text.Size = UDim2.new(1,0,1,0); text.BackgroundTransparency = 1
+                            text.TextScaled = false; text.TextSize = 12
+                            text.Font = Enum.Font.GothamBold
+                            text.TextColor3 = Color3.fromRGB(255,255,255)
+                            text.TextStrokeTransparency = 0
+                            text.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+                            text.RichText = true; esp.Parent = head
+                        end
+                        local dist = math.floor((Camera.CFrame.Position - head.Position).Magnitude)
+                        local hp   = math.floor((hum.Health / hum.MaxHealth) * 100)
+                        local teamColor = Color3.fromRGB(255,255,255)
+                        local tR,tG,tB = 255,255,255
+                        if player.Team then
+                            local tc = player.Team.TeamColor.Color
+                            teamColor = tc
+                            tR,tG,tB = math.floor(tc.R*255),math.floor(tc.G*255),math.floor(tc.B*255)
+                        end
+                        local hpColor = hp>70 and "rgb(0,255,127)" or hp>30 and "rgb(255,200,0)" or "rgb(255,50,50)"
+                        esp.NameText.Text = string.format(
+                            '<font color="rgb(%d,%d,%d)">%s</font> | %dm | <font color="%s">%d%%</font>',
+                            tR,tG,tB, player.DisplayName, dist, hpColor, hp)
+                        if not chams then
+                            chams = Instance.new("Highlight")
+                            chams.Name = "StarCrowChams"; chams.Parent = char
+                        end
+                        chams.FillColor = teamColor; chams.OutlineColor = teamColor
+                        chams.FillTransparency = 0.7; chams.OutlineTransparency = 0
+                        chams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    else
+                        if esp   then esp:Destroy()   end
+                        if chams then chams:Destroy() end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- ──────────────────────────────────────────────
+--  ESP ANIMALS
+-- ──────────────────────────────────────────────
+local function updateAnimalESP()
+    local animalsFolder = workspace:FindFirstChild("Animals")
+    if not animalsFolder then return end
+    for _, animal in ipairs(animalsFolder:GetChildren()) do
+        local hum   = animal:FindFirstChildWhichIsA("Humanoid")
+        local torso = animal:FindFirstChild("Torso") or animal:FindFirstChild("LowerTorso")
+        if hum and torso then
+            local esp = torso:FindFirstChild("AnimalESP")
+            if ESPAnimalsEnabled and hum.Health > 0 then
+                if not esp then
+                    esp = Instance.new("BillboardGui")
+                    esp.Name = "AnimalESP"; esp.Adornee = torso
+                    esp.Size = UDim2.new(0, 350, 0, 30)
+                    esp.StudsOffset = Vector3.new(0, 2, 0)
+                    esp.AlwaysOnTop = true
+                    local text = Instance.new("TextLabel")
+                    text.Name = "NameText"; text.Parent = esp
+                    text.Size = UDim2.new(1,0,1,0); text.BackgroundTransparency = 1
+                    text.TextColor3 = Color3.new(1,1,1); text.TextSize = 12
+                    text.Font = Enum.Font.GothamBold
+                    text.TextStrokeTransparency = 0; text.RichText = true
+                    esp.Parent = torso
+                end
+                local dist = math.floor((Camera.CFrame.Position - torso.Position).Magnitude)
+                local hp   = math.floor((hum.Health / hum.MaxHealth) * 100)
+                local cleanName = string.split(animal.Name, "{")[1] or animal.Name
+                local nameColor = "rgb(200,200,200)"
+                local lower = string.lower(cleanName)
+                if string.match(lower,"legend") or string.match(lower,"direwolf") or string.match(lower,"dire wolf") then
+                    nameColor = "rgb(255,215,0)"
+                end
+                local hpColor = hp>70 and "rgb(0,255,127)" or hp>30 and "rgb(255,200,0)" or "rgb(255,50,50)"
+                esp.NameText.Text = string.format(
+                    '<font color="%s">%s</font> | %dm | <font color="%s">%d%%</font>',
+                    nameColor, cleanName, dist, hpColor, hp)
+            else
+                if esp then esp:Destroy() end
+            end
+        end
+    end
+end
+
+-- ──────────────────────────────────────────────
+--  RUNSERVICE LOOPS
+-- ──────────────────────────────────────────────
+RunService.RenderStepped:Connect(function()
+    if S.Config.AimMode == "FOV" and (S.Config.AimPlayer or S.Config.AimNPC) then
+        fovCircle.Visible = true
+        fovCircle.Size = UDim2.new(0, S.Config.FOVRadius*2, 0, S.Config.FOVRadius*2)
+    else
+        fovCircle.Visible = false
+    end
+    updateESP(); updateAnimalESP()
+    if S.Config.NoFog then
+        Lighting.FogEnd = 100000; Lighting.FogStart = 100000
+        local atmo = Lighting:FindFirstChildOfClass("Atmosphere")
+        if atmo then atmo.Density=0; atmo.Haze=0; atmo.Glare=0 end
+    end
+    if S.Config.FullBright then
+        Lighting.Ambient = Color3.new(1,1,1)
+        Lighting.ColorShift_Bottom = Color3.new(1,1,1)
+        Lighting.ColorShift_Top = Color3.new(1,1,1)
+        Lighting.Brightness = 3; Lighting.GlobalShadows = false; Lighting.ClockTime = 12
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    local char = LocalPlayer.Character
+    if not char then return end
+    if S.Config.NoclipEnabled then
+        for _, p in ipairs(char:GetDescendants()) do
+            if p:IsA("BasePart") and p.CanCollide then p.CanCollide = false end
+        end
+    end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum and S.Config.LoopSpeedEnabled then hum.WalkSpeed = S.Config.WalkSpeed end
+    if S.Config.AntiFallDamage then
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if root and root.AssemblyLinearVelocity.Y < -45 then
+            root.AssemblyLinearVelocity = Vector3.new(
+                root.AssemblyLinearVelocity.X, -10, root.AssemblyLinearVelocity.Z)
+        end
+    end
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if S.Config.InfJumpEnabled then
+        local char = LocalPlayer.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+        end
+    end
+end)
+
+-- ──────────────────────────────────────────────
+--  AIM TARGET LOOP
+-- ──────────────────────────────────────────────
+local function IsTargetVisible(targetPart, myChar)
+    local origin = Camera.CFrame.Position
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {myChar, Camera}
+    params.FilterType = Enum.RaycastFilterType.Exclude
+    local result = workspace:Raycast(origin, targetPart.Position - origin, params)
+    return not (result and result.Instance and not result.Instance:IsDescendantOf(targetPart.Parent))
+end
+
+local function isFriend(player)
+    if not S.Config.FriendCheck then return false end
+    local uid = player.UserId
+    if FriendCache[uid] ~= nil then return FriendCache[uid] end
+    local ok, res = pcall(function() return LocalPlayer:IsFriendsWith(uid) end)
+    if ok then FriendCache[uid] = res; return res end
+    return false
+end
+
+task.spawn(function()
+    while task.wait(0.05) do
+        local char = LocalPlayer.Character
+        isHoldingGun = char and char:FindFirstChildOfClass("Tool") ~= nil
+        if not (S.Config.AimPlayer or S.Config.AimNPC)
+        or not char or not char:FindFirstChild("HumanoidRootPart")
+        or not (S.Config.NoToolCheck or isHoldingGun) then
+            currentTarget = nil; continue
+        end
+        local myPos  = char.HumanoidRootPart.Position
+        local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+        local best   = nil; local shortest = math.huge
+
+        local function process(obj, isPlayer)
+            local hum  = obj:FindFirstChildOfClass("Humanoid")
+            local part = obj:FindFirstChild(S.Config.AimPart) or obj:FindFirstChild("Head")
+            if not hum or hum.Health <= 0 or not part then return end
+            if isPlayer then
+                local plr = Players:GetPlayerFromCharacter(obj)
+                if not plr or plr == LocalPlayer then return end
+                if S.Config.TeamCheck and plr.Team == LocalPlayer.Team then return end
+                if S.Config.FriendCheck and isFriend(plr) then return end
+                if plr.Team and string.match(string.lower(plr.Team.Name), "civilian") then return end
+            end
+            if S.Config.WallCheck and not IsTargetVisible(part, char) then return end
+            local pos, onScreen = Camera:WorldToViewportPoint(part.Position)
+            if not onScreen then return end
+            if S.Config.AimMode == "FOV" then
+                local d = (Vector2.new(pos.X, pos.Y) - center).Magnitude
+                if d < S.Config.FOVRadius and d < shortest then shortest=d; best=part end
+            else
+                local d3 = (part.Position - myPos).Magnitude
+                if d3 < shortest then shortest=d3; best=part end
+            end
+        end
+
+        if S.Config.AimPlayer then
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p.Character then process(p.Character, true) end
+            end
+        end
+        if S.Config.AimNPC then
+            for i = #NPCCache, 1, -1 do
+                local npc = NPCCache[i]
+                if npc and npc.Parent and not Players:GetPlayerFromCharacter(npc) then
+                    process(npc, false)
+                else table.remove(NPCCache, i) end
+            end
+        end
+        currentTarget = best
+    end
+end)
+
+-- ──────────────────────────────────────────────
+--  SILENT AIM HOOK
+-- ──────────────────────────────────────────────
+function InitSilentAimHook()
+    if isNamecallHooked then return end
+    isNamecallHooked = true
+    oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+        if not (S.Config.AimPlayer or S.Config.AimNPC) then return oldNamecall(self, ...) end
+        local method = getnamecallmethod()
+        if not checkcaller() and self == workspace and currentTarget
+        and (not S.Config.ClickToAim or S.Config.IsTapping)
+        and (S.Config.NoToolCheck or isHoldingGun) then
+            if method=="Raycast" or method=="FindPartOnRayWithIgnoreList" or method=="FindPartOnRay" then
+                local args = {...}
+                local tp   = currentTarget.Position
+                if S.Config.Prediction then
+                    local vel = currentTarget.AssemblyLinearVelocity
+                    if vel then tp = tp + vel * S.Config.PredictionFactor end
+                end
+                if method=="Raycast" and typeof(args[2])=="Vector3" and args[2].Magnitude > 30 then
+                    args[2] = (tp - args[1]).Unit * args[2].Magnitude
+                    return oldNamecall(self, unpack(args))
+                elseif (method=="FindPartOnRayWithIgnoreList" or method=="FindPartOnRay")
+                and args[1] and args[1].Direction.Magnitude > 30 then
+                    args[1] = Ray.new(args[1].Origin, (tp - args[1].Origin).Unit * args[1].Direction.Magnitude)
+                    return oldNamecall(self, unpack(args))
+                end
+            end
+        end
+        return oldNamecall(self, ...)
+    end)
+end
+getgenv()._SC_InitHook = InitSilentAimHook
+
+UserInputService.InputBegan:Connect(function(i, p)
+    if not p and (i.UserInputType==Enum.UserInputType.MouseButton1
+    or i.UserInputType==Enum.UserInputType.Touch) then
+        S.Config.IsTapping = true
+    end
+end)
+UserInputService.InputEnded:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.MouseButton1
+    or i.UserInputType==Enum.UserInputType.Touch then
+        S.Config.IsTapping = false
+    end
+end)
