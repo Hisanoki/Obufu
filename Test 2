@@ -1,12 +1,3 @@
--- ══════════════════════════════════════════════
---   STARCROW HUB  |  PART 2 — CORE
---   Chứa: Ban List, Logic, GUI
---   Obfuscation-safe: mọi ref đều là local variable
--- ══════════════════════════════════════════════
-
--- ── [A] CACHE TẤT CẢ SERVICE & GLOBAL VÀO LOCAL ──
--- Obfuscator có thể đổi tên biến nhưng KHÔNG thể
--- thay đổi logic gọi game:GetService() bằng string.
 local _GS            = function(s) return game:GetService(s) end
 local Players        = _GS("Players")
 local RunService     = _GS("RunService")
@@ -21,8 +12,6 @@ local Debris         = _GS("Debris")
 local LocalPlayer    = Players.LocalPlayer
 local Camera         = workspace.CurrentCamera
 
--- Config được truyền từ Part 1 qua getgenv()
--- Nếu không có (chạy độc lập khi test), tạo mặc định
 local C = getgenv().StarConfig or {
     AimPlayer=false, AimNPC=false, TeamCheck=false,
     FriendCheck=false, WallCheck=false, AimMode="FOV",
@@ -34,7 +23,6 @@ local C = getgenv().StarConfig or {
     InfJumpEnabled=false, NoclipEnabled=false, AntiFallDamage=false,
 }
 
--- ── [B] UTILS (pcall-wrapped, obfuscation-safe) ───
 local function _pcall(fn, ...)
     local ok, r = pcall(fn, ...)
     return ok, r
