@@ -1,5 +1,5 @@
 if game.PlaceId ~= 2474168535 then
-    game:GetService("Players").LocalPlayer:Kick("Westbound only!")
+    game:GetService("Players").LocalPlayer:Kick("This script only supports Westbound!")
     return
 end
 
@@ -7,30 +7,57 @@ local Players     = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 
--- BAN LIST
-local function FetchBanList()
-    local ok, res = pcall(function()
-        -- Nhớ thay URL thực tế của file JSON Ban List vào đây nhé
-        return game:HttpGet("URL_BAN_JSON_CỦA_BẠN")
-    end)
-    if not ok then return {} end
-    local ok2, list = pcall(HttpService.JSONDecode, HttpService, res)
-    return (ok2 and type(list) == "table") and list or {}
+-- ================================================
+-- HỆ THỐNG BAN LIST GỐC (TỪ GITHUB GISTS)
+-- ================================================
+local GIST_ID      = "92086d0c65244c07ccb9afbfd7743c57 "
+local GIST_TOKEN   = "  "
+local GIST_FILE    = "bans.json"
+
+local function HttpRequest(options)
+    local fn = request or syn and syn.request or http and http.request or nil
+    if fn then return fn(options) end
+    return nil
 end
 
-local n, id = LocalPlayer.Name, tostring(LocalPlayer.UserId)
-for _, e in ipairs(FetchBanList()) do
-    local banned = (type(e)=="table" and (e.name==n or e.id==id))
-               or  (type(e)=="string" and (e==n or e==id))
-    if banned then
-        LocalPlayer:Kick((type(e)=="table" and e.reason~="") 
-            and "[StarCrowHub] Banned: "..e.reason 
-            or  "[StarCrowHub] You are banned.")
-        return
+local function FetchBanList()
+    local ok, res = pcall(HttpRequest, {
+        Url     = "https://api.github.com/gists/" .. GIST_ID,
+        Method  = "GET",
+        Headers = { ["Accept"] = "application/vnd.github+json" }
+    })
+    if not ok or not res or res.StatusCode ~= 200 then return {} end
+    local ok2, data = pcall(HttpService.JSONDecode, HttpService, res.Body)
+    if not ok2 or not data then return {} end
+    local file = data.files and data.files[GIST_FILE]
+    if not file then return {} end
+    local ok3, list = pcall(HttpService.JSONDecode, HttpService, file.content)
+    return (ok3 and type(list) == "table") and list or {}
+end
+
+local BanList = FetchBanList()
+
+do
+    local n  = LocalPlayer.Name
+    local id = tostring(LocalPlayer.UserId)
+    for _, entry in ipairs(BanList) do
+        local matchName = type(entry) == "table" and entry.name == n
+        local matchId   = type(entry) == "table" and entry.id   == id
+        local legacyStr = type(entry) == "string" and (entry == n or entry == id)
+        if matchName or matchId or legacyStr then
+            local reason = (type(entry) == "table" and entry.reason ~= "") and entry.reason or nil
+            local msg = reason
+                and "[StarCrowHub] You are banned. Reason: " .. reason
+                or  "[StarCrowHub] You are banned from using this script."
+            LocalPlayer:Kick(msg)
+            return
+        end
     end
 end
 
--- CONFIG
+-- ================================================
+-- CONFIG & FLUENT UI
+-- ================================================
 getgenv()._SC_S = {
     Config = {
         AimPlayer=false, AimNPC=false, TeamCheck=false, FriendCheck=false,
@@ -44,13 +71,12 @@ getgenv()._SC_S = {
 }
 getgenv().StarConfig = getgenv()._SC_S.Config
 
--- FLUENT
 getgenv()._SC_Fluent = loadstring(game:HttpGet(
     "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
 ))()
 
 -- ================================================
--- TRÌNH TẢI PART 2 VÀ PART 3 TỰ ĐỘNG
+-- TRÌNH TẢI PART 2 VÀ PART 3
 -- ================================================
 local function LoadComponent(name, url)
     local success, result = pcall(function()
@@ -61,11 +87,10 @@ local function LoadComponent(name, url)
     end
 end
 
--- 1. Gọi Part 2 (Core Logic) bằng link GitHub của bạn
+-- Tải Part 2
 LoadComponent("Part 2 (Core)", "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%202")
 
--- 2. Dừng 0.5 giây để đảm bảo Part 2 đã truyền hết hàm sang getgenv()
 task.wait(0.5) 
 
--- 3. Gọi Part 3 (Fluent GUI) bằng link GitHub của bạn
+-- Tải Part 3
 LoadComponent("Part 3 (GUI)", "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%203")
