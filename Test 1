@@ -1,96 +1,134 @@
-if game.PlaceId ~= 2474168535 then
-    game:GetService("Players").LocalPlayer:Kick("This script only supports Westbound!")
-    return
-end
+-- ══════════════════════════════════════════════
+--   STARCROW HUB  |  PART 1 — SECURE LOADER
+--   Kiểm tra môi trường trước, rồi mới load core
+-- ══════════════════════════════════════════════
 
-local Players     = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local HttpService = game:GetService("HttpService")
-
--- ================================================
--- HỆ THỐNG BAN LIST GỐC (TỪ GITHUB GISTS)
--- ================================================
-local GIST_ID      = "92086d0c65244c07ccb9afbfd7743c57 "
-local GIST_TOKEN   = "  "
-local GIST_FILE    = "bans.json"
-
-local function HttpRequest(options)
-    local fn = request or syn and syn.request or http and http.request or nil
-    if fn then return fn(options) end
-    return nil
-end
-
-local function FetchBanList()
-    local ok, res = pcall(HttpRequest, {
-        Url     = "https://api.github.com/gists/" .. GIST_ID,
-        Method  = "GET",
-        Headers = { ["Accept"] = "application/vnd.github+json" }
-    })
-    if not ok or not res or res.StatusCode ~= 200 then return {} end
-    local ok2, data = pcall(HttpService.JSONDecode, HttpService, res.Body)
-    if not ok2 or not data then return {} end
-    local file = data.files and data.files[GIST_FILE]
-    if not file then return {} end
-    local ok3, list = pcall(HttpService.JSONDecode, HttpService, file.content)
-    return (ok3 and type(list) == "table") and list or {}
-end
-
-local BanList = FetchBanList()
-
+-- ── [1] COOLDOWN (chống re-execute liên tục) ──
 do
-    local n  = LocalPlayer.Name
-    local id = tostring(LocalPlayer.UserId)
-    for _, entry in ipairs(BanList) do
-        local matchName = type(entry) == "table" and entry.name == n
-        local matchId   = type(entry) == "table" and entry.id   == id
-        local legacyStr = type(entry) == "string" and (entry == n or entry == id)
-        if matchName or matchId or legacyStr then
-            local reason = (type(entry) == "table" and entry.reason ~= "") and entry.reason or nil
-            local msg = reason
-                and "[StarCrowHub] You are banned. Reason: " .. reason
-                or  "[StarCrowHub] You are banned from using this script."
-            LocalPlayer:Kick(msg)
+    local COOLDOWN = 10
+    local now = tick()
+    if getgenv()._SC_Loaded then
+        warn("[StarCrow] Already loaded.")
+        return
+    end
+    if getgenv()._SC_LastExe and (now - getgenv()._SC_LastExe) < COOLDOWN then
+        warn("[StarCrow] Execute too fast.")
+        return
+    end
+    getgenv()._SC_LastExe = now
+    getgenv()._SC_Loaded  = true
+end
+
+-- ── [2] ANTI LOADSTRING SPY ───────────────────
+--  Kỹ thuật: spy hook thường wrap loadstring bằng
+--  một Lua closure, còn bản gốc là C closure.
+--  Ta dùng nhiều lớp kiểm tra để tránh bypass đơn giản.
+do
+    local function _kick(reason)
+        warn("[StarCrow] Security check failed: " .. reason)
+        -- Huỷ flag để không leak bất cứ thứ gì
+        getgenv()._SC_Loaded  = nil
+        getgenv()._SC_LastExe = nil
+        game:GetService("Players").LocalPlayer:Kick(
+            "\n[StarCrow Hub] Security violation detected.\n" ..
+            "Reason: " .. reason
+        )
+    end
+
+    -- CHECK 1: loadstring phải là C closure (bản gốc engine)
+    if not iscclosure(loadstring) then
+        _kick("loadstring is not a C-closure (hooked?)")
+        return
+    end
+
+    -- CHECK 2: debug.info trên loadstring phải trỏ về [C]
+    do
+        local ok, src = pcall(debug.info, loadstring, "s")
+        if ok and src and src ~= "[C]" then
+            _kick("loadstring source is not [C]: " .. tostring(src))
+            return
+        end
+    end
+
+    -- CHECK 3: Thử gọi một chuỗi "canary" vô hại.
+    --  Nếu spy đang chạy, nó sẽ in/clipboard nội dung này.
+    --  Còn ta dùng pcall để chắc chắn không crash.
+    --  (Không thể phát hiện clipboard leak từ phía client,
+    --   nhưng kết hợp check 1+2 đủ để chặn script thông thường.)
+    do
+        local _canary = "-- SC_CANARY_7f3a9b"
+        local fn, err = loadstring(_canary)
+        -- loadstring hợp lệ sẽ trả về nil, "attempt to..." vì
+        -- _canary là comment, không có code thực thi → trả về function rỗng
+        -- Quan trọng: nếu bị hook, check 1 đã chặn rồi
+        -- Ở đây ta chỉ verify loadstring còn hoạt động bình thường
+        if type(fn) ~= "function" then
+            -- comment thuần túy vẫn compile thành function hợp lệ
+            _kick("loadstring returned unexpected result for canary")
+            return
+        end
+    end
+
+    -- CHECK 4: So sánh upvalue count của loadstring gốc
+    --  hookfunction thường thêm upvalue để giữ ref hàm cũ
+    do
+        local ok, n = pcall(debug.info, loadstring, "u")  -- số upvalue
+        -- C closure = 0 upvalue; Lua wrapper sẽ có >= 1
+        if ok and type(n) == "number" and n > 0 then
+            _kick("loadstring has unexpected upvalues (" .. n .. ")")
             return
         end
     end
 end
 
--- ================================================
--- CONFIG & FLUENT UI
--- ================================================
-getgenv()._SC_S = {
-    Config = {
-        AimPlayer=false, AimNPC=false, TeamCheck=false, FriendCheck=false,
-        WallCheck=false, AimMode="FOV", AimPart="Head", FOVRadius=90,
-        ClickToAim=false, IsTapping=false, NoToolCheck=false,
-        Prediction=false, PredictionFactor=0.15, ESPEnabled=false,
-        NoFog=false, FullBright=false, LoopSpeedEnabled=false,
-        WalkSpeed=30, InfJumpEnabled=false, NoclipEnabled=false,
-        AntiFallDamage=false,
-    }
-}
-getgenv().StarConfig = getgenv()._SC_S.Config
-
-getgenv()._SC_Fluent = loadstring(game:HttpGet(
-    "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
-))()
-
--- ================================================
--- TRÌNH TẢI PART 2 VÀ PART 3
--- ================================================
-local function LoadComponent(name, url)
-    local success, result = pcall(function()
-        return loadstring(game:HttpGet(url))()
-    end)
-    if not success then
-        warn("[StarCrowHub] Lỗi khi tải " .. name .. ": " .. tostring(result))
-    end
+-- ── [3] GAME CHECK ────────────────────────────
+if game.PlaceId ~= 2474168535 then
+    game:GetService("Players").LocalPlayer:Kick(
+        "[StarCrow] This script only supports Westbound!"
+    )
+    return
 end
 
--- Tải Part 2
-LoadComponent("Part 2 (Core)", "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%202")
+-- ── [4] SHARED CONFIG (được chia sẻ sang Part 2) ─
+getgenv().StarConfig = {
+    -- Silent Aim
+    AimPlayer        = false,
+    AimNPC           = false,
+    TeamCheck        = false,
+    FriendCheck      = false,
+    WallCheck        = false,
+    AimMode          = "FOV",
+    AimPart          = "Head",
+    FOVRadius        = 90,
+    ClickToAim       = false,
+    IsTapping        = false,
+    NoToolCheck      = false,
+    Prediction       = false,
+    PredictionFactor = 0.15,
+    -- Visual
+    ESPEnabled       = false,
+    NoFog            = false,
+    FullBright       = false,
+    -- Player
+    LoopSpeedEnabled = false,
+    WalkSpeed        = 30,
+    InfJumpEnabled   = false,
+    NoclipEnabled    = false,
+    AntiFallDamage   = false,
+}
 
-task.wait(0.5) 
+-- ── [5] GỌI PART 2 (thay link raw của bạn vào đây) ─
+--  Tất cả logic cốt lõi + ban list + GUI nằm trong Part 2.
+--  Part 2 được tải bằng loadstring SAU KHI đã xác nhận
+--  môi trường an toàn ở trên.
+local PART2_URL = "https://raw.githubusercontent.com/YOUR_REPO/main/Part2_Core.lua"
 
--- Tải Part 3
-LoadComponent("Part 3 (GUI)", "https://raw.githubusercontent.com/Hisanoki/Obufu/refs/heads/main/Test%203")
+local ok, result = pcall(function()
+    return loadstring(game:HttpGet(PART2_URL, true))()
+end)
+
+if not ok then
+    warn("[StarCrow] Failed to load Part 2: " .. tostring(result))
+    getgenv()._SC_Loaded  = nil
+    getgenv()._SC_LastExe = nil
+end
