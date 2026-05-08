@@ -1,1 +1,527 @@
+local _GS              = function(s) return game:GetService(s) end
+local Players          = _GS("Players")
+local UserInputService = _GS("UserInputService")
+local TweenService     = _GS("TweenService")
+local RunService       = _GS("RunService")
+local HttpService      = _GS("HttpService")
+local CoreGui          = _GS("CoreGui")
 
+local LocalPlayer = Players.LocalPlayer
+local Camera      = workspace.CurrentCamera
+
+local C = getgenv().SC_GT_Config or {
+    SilentAim=false, FOV=90, AimPart="Head",
+    TeamCheck=false, FriendCheck=false,
+    InfAmmo=false, NoRecoil=false,
+    FastFire=false, FireRate=0.05,
+    Multishot=false, BulletPerShot=15,
+    MagicBullets=false, ESPEnabled=false,
+    LoopSpeedEnabled=false, WalkSpeed=30,
+    InfJumpEnabled=false, NoclipEnabled=false,
+}
+
+local function _pcall(fn, ...)
+    local ok, r = pcall(fn, ...)
+    return ok, r
+end
+
+local function _req()
+    return request or (syn and syn.request)
+        or (http and http.request)
+        or http_request or (fluxus and fluxus.request)
+end
+
+local _GIST_ID    = "92086d0c65244c07ccb9afbfd7743c57"
+local _GIST_TOKEN = "GĂN_TOKEN_Cá»¦A_Báº N_VĂ€O_ÄĂ‚Y"
+local _GIST_FILE  = "bans.json"
+
+task.spawn(function()
+    local fn = _req(); if not fn then return end
+    local ok, res = _pcall(fn, {
+        Url     = "https://api.github.com/gists/" .. _GIST_ID,
+        Method  = "GET",
+        Headers = { ["Accept"] = "application/vnd.github+json" },
+    })
+    if not ok or not res or res.StatusCode ~= 200 then return end
+    local ok2, data = _pcall(HttpService.JSONDecode, HttpService, res.Body)
+    if not ok2 then return end
+    local file = data.files and data.files[_GIST_FILE]; if not file then return end
+    local ok3, list = _pcall(HttpService.JSONDecode, HttpService, file.content)
+    if not ok3 or type(list) ~= "table" then return end
+    local uid   = tostring(LocalPlayer.UserId)
+    local uname = LocalPlayer.Name
+    for _, entry in ipairs(list) do
+        local hit, reason = false, ""
+        if type(entry) == "string" then
+            hit = (entry == uname or entry == uid)
+        elseif type(entry) == "table" then
+            hit    = (entry.name == uname or entry.id == uid)
+            reason = tostring(entry.reason or "")
+        end
+        if hit then
+            local msg = reason ~= "" and reason or "You are banned from StarCrow Hub."
+            _pcall(function() LocalPlayer:Kick("[StarCrow] " .. msg) end)
+            return
+        end
+    end
+end)
+
+task.spawn(function()
+    local fn = _req(); if not fn then return end
+    local _WH = "https://whsecurity.phongngao903.workers.dev"
+    local execName = "Unknown"
+    _pcall(function()
+        if type(identifyexecutor) == "function" then
+            local n, v = identifyexecutor()
+            execName = tostring(n) .. (v and (" " .. tostring(v)) or "")
+        end
+    end)
+    local avatarUrl, gameIconUrl, gameName = "", "", tostring(game.PlaceId)
+    _pcall(function()
+        gameName = _GS("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+    end)
+    _pcall(function()
+        local r = fn({ Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="
+            ..LocalPlayer.UserId.."&size=420x420&format=Png", Method="GET" })
+        if r and r.StatusCode == 200 then
+            local d = HttpService:JSONDecode(r.Body)
+            avatarUrl = d.data and d.data[1] and d.data[1].imageUrl or ""
+        end
+    end)
+    _pcall(function()
+        local r = fn({ Url = "https://thumbnails.roblox.com/v1/places/gameicons?placeIds="
+            ..game.PlaceId.."&returnPolicy=PlaceHolder&size=512x512&format=Png", Method="GET" })
+        if r and r.StatusCode == 200 then
+            local d = HttpService:JSONDecode(r.Body)
+            gameIconUrl = d.data and d.data[1] and d.data[1].imageUrl or ""
+        end
+    end)
+    local embed = {
+        title  = "StarCrow Hub Executed",
+        color  = 8519935,
+        fields = {
+            { name="Player",   value="["..LocalPlayer.Name.."](https://www.roblox.com/users/"..LocalPlayer.UserId.."/profile)", inline=true },
+            { name="UserID",   value=tostring(LocalPlayer.UserId), inline=true },
+            { name="Executor", value=execName, inline=true },
+            { name="Game",     value=gameName, inline=true },
+        },
+    }
+    if avatarUrl   ~= "" then embed.thumbnail = { url = avatarUrl   } end
+    if gameIconUrl ~= "" then embed.image     = { url = gameIconUrl } end
+    _pcall(fn, {
+        Url     = _WH,
+        Method  = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body    = HttpService:JSONEncode({ embeds = { embed } }),
+    })
+end)
+
+local _logoGui = Instance.new("ScreenGui")
+_logoGui.Name = "SCLogoGui_GT"
+_logoGui.ResetOnSpawn = false
+_logoGui.DisplayOrder = 10000
+_pcall(function() _logoGui.Parent = CoreGui end)
+if not _logoGui.Parent then _logoGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local _logoFrame = Instance.new("Frame", _logoGui)
+_logoFrame.Size = UDim2.new(0,46,0,46)
+_logoFrame.Position = UDim2.new(0,8,0.5,-23)
+_logoFrame.BackgroundColor3 = Color3.fromRGB(18,18,28)
+_logoFrame.BorderSizePixel = 0
+Instance.new("UICorner", _logoFrame).CornerRadius = UDim.new(0.2,0)
+
+local _lStroke = Instance.new("UIStroke", _logoFrame)
+_lStroke.Thickness = 1.8
+_lStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+local _lGrad = Instance.new("UIGradient", _lStroke)
+_lGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0,   Color3.fromRGB(130,0,255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,130,255)),
+    ColorSequenceKeypoint.new(1,   Color3.fromRGB(130,0,255)),
+})
+task.spawn(function()
+    TweenService:Create(_lGrad,
+        TweenInfo.new(3,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut,-1,true),
+        {Rotation=180}):Play()
+end)
+
+local _logoImg = Instance.new("ImageLabel", _logoFrame)
+_logoImg.Size = UDim2.new(1,-6,1,-6)
+_logoImg.Position = UDim2.new(0,3,0,3)
+_logoImg.BackgroundTransparency = 1
+_logoImg.Image = "rbxthumb://type=Asset&id=115542332056889&w=150&h=150"
+_logoImg.ScaleType = Enum.ScaleType.Fit
+
+local _logoBtn = Instance.new("TextButton", _logoFrame)
+_logoBtn.Size = UDim2.new(1,0,1,0)
+_logoBtn.BackgroundTransparency = 1
+_logoBtn.Text = ""
+_logoBtn.ZIndex = 5
+
+do
+    local _drag, _di, _ds, _dp = false, nil, nil, nil
+    _logoBtn.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1
+        or i.UserInputType == Enum.UserInputType.Touch then
+            _drag=true; _di=i; _ds=i.Position; _dp=_logoFrame.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(i)
+        if _drag and i == _di then
+            local d = i.Position - _ds
+            _logoFrame.Position = UDim2.new(_dp.X.Scale, _dp.X.Offset+d.X, _dp.Y.Scale, _dp.Y.Offset+d.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(i)
+        if i == _di then _drag=false; _di=nil end
+    end)
+end
+
+local _uiVisible = true
+local function _toggleUI(v)
+    for _, g in ipairs(CoreGui:GetChildren()) do
+        if g:IsA("ScreenGui") then
+            for _, desc in ipairs(g:GetDescendants()) do
+                if desc:IsA("TextLabel") and desc.Text == "StarCrowHub" then
+                    local p = desc.Parent
+                    while p and p.Parent ~= g do p = p.Parent end
+                    if p and p:IsA("Frame") then
+                        p.Visible = v; return
+                    end
+                end
+            end
+        end
+    end
+end
+
+_logoBtn.MouseButton1Click:Connect(function()
+    _uiVisible = not _uiVisible
+    _toggleUI(_uiVisible)
+    TweenService:Create(_logoImg, TweenInfo.new(0.15), {
+        ImageTransparency = _uiVisible and 0 or 0.5,
+    }):Play()
+end)
+
+local _fovGui = Instance.new("ScreenGui")
+_fovGui.Name = "SCFov_GT"
+_fovGui.IgnoreGuiInset = true
+_pcall(function() _fovGui.Parent = CoreGui end)
+if not _fovGui.Parent then _fovGui.Parent = LocalPlayer:WaitForChild("PlayerGui") end
+
+local _fovCircle = Instance.new("Frame", _fovGui)
+_fovCircle.AnchorPoint = Vector2.new(0.5,0.5)
+_fovCircle.Position = UDim2.new(0.5,0,0.5,0)
+_fovCircle.BackgroundTransparency = 1
+_fovCircle.Visible = false
+Instance.new("UICorner", _fovCircle).CornerRadius = UDim.new(1,0)
+local _fovStroke = Instance.new("UIStroke", _fovCircle)
+_fovStroke.Color = Color3.fromRGB(0,255,127)
+_fovStroke.Thickness = 2
+
+local _gunCache  = {}
+local _origStats = {}
+
+local function _scanGuns()
+    for _, v in pairs(getgc(true)) do
+        if type(v) == "table"
+        and rawget(v, "ModuleName")
+        and rawget(v, "FireRate")
+        and not _origStats[v] then
+            _origStats[v] = {
+                LimitedAmmoEnabled     = rawget(v,"LimitedAmmoEnabled"),
+                AmmoCost               = rawget(v,"AmmoCost"),
+                Ammo                   = rawget(v,"Ammo"),
+                MaxAmmo                = rawget(v,"MaxAmmo"),
+                ReloadTime             = rawget(v,"ReloadTime"),
+                Recoil                 = rawget(v,"Recoil"),
+                Spread                 = rawget(v,"Spread"),
+                CameraRecoilingEnabled = rawget(v,"CameraRecoilingEnabled"),
+                Auto                   = rawget(v,"Auto"),
+                FireRate               = rawget(v,"FireRate"),
+                ShotgunEnabled         = rawget(v,"ShotgunEnabled"),
+                BulletPerShot          = rawget(v,"BulletPerShot"),
+                ShotgunPattern         = rawget(v,"ShotgunPattern"),
+            }
+            table.insert(_gunCache, v)
+        end
+    end
+end
+
+local function _updateGuns()
+    for _, v in ipairs(_gunCache) do
+        _pcall(function()
+            if setreadonly then setreadonly(v, false) end
+            local o = _origStats[v]
+            v.LimitedAmmoEnabled     = C.InfAmmo  and false         or o.LimitedAmmoEnabled
+            v.AmmoCost               = C.InfAmmo  and 0             or o.AmmoCost
+            v.Ammo                   = C.InfAmmo  and 999999        or o.Ammo
+            v.MaxAmmo                = C.InfAmmo  and 999999        or o.MaxAmmo
+            v.ReloadTime             = C.InfAmmo  and 0             or o.ReloadTime
+            v.Recoil                 = C.NoRecoil and 0             or o.Recoil
+            v.Spread                 = C.NoRecoil and 0             or o.Spread
+            v.CameraRecoilingEnabled = C.NoRecoil and false         or o.CameraRecoilingEnabled
+            v.Auto                   = C.FastFire and true          or o.Auto
+            v.FireRate               = C.FastFire and C.FireRate    or o.FireRate
+            v.ShotgunEnabled         = C.Multishot and true         or o.ShotgunEnabled
+            v.BulletPerShot          = C.Multishot and C.BulletPerShot or o.BulletPerShot
+            v.ShotgunPattern         = C.Multishot and false        or o.ShotgunPattern
+            if setreadonly then setreadonly(v, true) end
+        end)
+    end
+end
+
+local function _forceReEquip()
+    _pcall(function()
+        local ch  = LocalPlayer.Character; if not ch then return end
+        local tool= ch:FindFirstChildOfClass("Tool"); if not tool then return end
+        local hum = ch:FindFirstChildOfClass("Humanoid"); if not hum then return end
+        hum:UnequipTools(); task.wait(0.01); hum:EquipTool(tool)
+    end)
+end
+
+local function _applyMods()
+    _updateGuns(); _forceReEquip()
+end
+
+_scanGuns()
+task.spawn(function()
+    while task.wait(5) do _scanGuns() end
+end)
+
+local _currentTarget = nil
+local _holdingGun    = false
+local _friendCache   = {}
+
+local function _isFriend(pl)
+    if not C.FriendCheck then return false end
+    local id = pl.UserId
+    if _friendCache[id] ~= nil then return _friendCache[id] end
+    local ok, r = _pcall(function() return LocalPlayer:IsFriendsWith(id) end)
+    _friendCache[id] = ok and r or false
+    return _friendCache[id]
+end
+
+task.spawn(function()
+    while task.wait(0.1) do
+        _pcall(function()
+            if not C.SilentAim and not C.MagicBullets then
+                _currentTarget = nil; return
+            end
+            local ch = LocalPlayer.Character
+            _holdingGun = ch and ch:FindFirstChildOfClass("Tool") ~= nil
+            if not _holdingGun then _currentTarget = nil; return end
+            local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+            local best, shortest = nil, C.FOV
+            for _, pl in ipairs(Players:GetPlayers()) do
+                if pl == LocalPlayer or not pl.Character then continue end
+                if C.TeamCheck and pl.Team and LocalPlayer.Team and pl.Team == LocalPlayer.Team then continue end
+                if _isFriend(pl) then continue end
+                local part = pl.Character:FindFirstChild(C.AimPart)
+                local hum  = pl.Character:FindFirstChildOfClass("Humanoid")
+                if not part or not hum or hum.Health <= 0 then continue end
+                local sp, onScreen = Camera:WorldToViewportPoint(part.Position)
+                if not onScreen then continue end
+                local d = (Vector2.new(sp.X, sp.Y) - center).Magnitude
+                if d < shortest then shortest = d; best = part end
+            end
+            _currentTarget = best
+        end)
+    end
+end)
+
+local _oldNC
+_oldNC = hookmetamethod(game, "__namecall", function(self, ...)
+    if not C.SilentAim and not C.MagicBullets then return _oldNC(self, ...) end
+    local m = getnamecallmethod()
+    if not checkcaller() and _currentTarget and _holdingGun and self == workspace then
+        local args = {...}
+        if m == "Raycast" then
+            local orig, dir = args[1], args[2]
+            if typeof(orig)=="Vector3" and typeof(dir)=="Vector3" and dir.Magnitude > 5 then
+                local tPos = _currentTarget.Position
+                if C.MagicBullets then
+                    local u = (tPos - Camera.CFrame.Position).Unit
+                    args[1] = tPos - (u * 1.5); args[2] = u * 100
+                else
+                    args[2] = (tPos - orig).Unit * dir.Magnitude
+                end
+                return _oldNC(self, unpack(args))
+            end
+        elseif m == "FindPartOnRayWithIgnoreList" or m == "FindPartOnRay" then
+            local ray = args[1]
+            if typeof(ray)=="Ray" and ray.Direction.Magnitude > 5 then
+                local tPos = _currentTarget.Position
+                if C.MagicBullets then
+                    local u = (tPos - Camera.CFrame.Position).Unit
+                    args[1] = Ray.new(tPos - (u*1.5), u*100)
+                else
+                    args[1] = Ray.new(ray.Origin, (tPos - ray.Origin).Unit * ray.Direction.Magnitude)
+                end
+                return _oldNC(self, unpack(args))
+            end
+        end
+    end
+    return _oldNC(self, ...)
+end)
+
+local function _updateESP()
+    if not C.ESPEnabled then return end
+    for _, pl in ipairs(Players:GetPlayers()) do
+        if pl == LocalPlayer then continue end
+        _pcall(function()
+            local ch  = pl.Character; if not ch then return end
+            local hum = ch:FindFirstChildOfClass("Humanoid"); if not hum then return end
+            local head= ch:FindFirstChild("Head"); if not head then return end
+            if hum.Health <= 0 then
+                local e=head:FindFirstChild("StarCrowESP"); if e then e:Destroy() end
+                local c=ch:FindFirstChild("StarCrowChams"); if c then c:Destroy() end
+                return
+            end
+            local esp = head:FindFirstChild("StarCrowESP")
+            if not esp then
+                esp = Instance.new("BillboardGui"); esp.Name="StarCrowESP"
+                esp.Adornee=head; esp.Size=UDim2.new(0,350,0,24)
+                esp.StudsOffset=Vector3.new(0,1.2,0)
+                esp.AlwaysOnTop=true; esp.MaxDistance=math.huge
+                local lbl=Instance.new("TextLabel",esp); lbl.Name="L"
+                lbl.Size=UDim2.new(1,0,1,0); lbl.BackgroundTransparency=1
+                lbl.RichText=true; lbl.Font=Enum.Font.GothamBold; lbl.TextSize=12
+                lbl.TextStrokeTransparency=0; lbl.TextStrokeColor3=Color3.new(0,0,0)
+                lbl.TextColor3=Color3.fromRGB(255,255,255)
+                esp.Parent=head
+            end
+            local lbl=esp:FindFirstChild("L"); if not lbl then return end
+            local dist=math.floor((Camera.CFrame.Position-head.Position).Magnitude)
+            local hp  =math.floor((hum.Health/math.max(hum.MaxHealth,1))*100)
+            local tR,tG,tB=255,255,255
+            local teamCol=Color3.fromRGB(255,255,255)
+            if pl.Team then
+                teamCol=pl.Team.TeamColor.Color
+                tR=math.floor(teamCol.R*255); tG=math.floor(teamCol.G*255); tB=math.floor(teamCol.B*255)
+            end
+            local hc=hp>70 and "rgb(0,255,127)" or hp>30 and "rgb(255,200,0)" or "rgb(255,50,50)"
+            lbl.Text=string.format(
+                '<font color="rgb(%d,%d,%d)">%s</font> | %dm | <font color="%s">%d%%</font>',
+                tR,tG,tB,pl.DisplayName,dist,hc,hp)
+            local chams=ch:FindFirstChild("StarCrowChams")
+            if not chams then
+                chams=Instance.new("Highlight"); chams.Name="StarCrowChams"; chams.Parent=ch
+            end
+            chams.FillColor=teamCol; chams.OutlineColor=teamCol
+            chams.FillTransparency=0.7; chams.OutlineTransparency=0
+            chams.DepthMode=Enum.HighlightDepthMode.AlwaysOnTop
+        end)
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    Camera = workspace.CurrentCamera
+    local show = C.SilentAim or C.MagicBullets
+    _fovCircle.Visible = show
+    if show then
+        _fovCircle.Size = UDim2.new(0, C.FOV*2, 0, C.FOV*2)
+    end
+    _updateESP()
+end)
+
+RunService.Stepped:Connect(function()
+    _pcall(function()
+        local ch = LocalPlayer.Character; if not ch then return end
+        if C.NoclipEnabled then
+            for _, p in ipairs(ch:GetDescendants()) do
+                if p:IsA("BasePart") and p.CanCollide then p.CanCollide=false end
+            end
+        end
+        local hum=ch:FindFirstChildOfClass("Humanoid")
+        if hum and C.LoopSpeedEnabled then hum.WalkSpeed=C.WalkSpeed end
+    end)
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if not C.InfJumpEnabled then return end
+    _pcall(function()
+        local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+    end)
+end)
+
+local Fluent = loadstring(game:HttpGet(
+    "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
+))()
+
+local Window = Fluent:CreateWindow({
+    Title       = "StarCrowHub",
+    SubTitle    = "Gun Tycoon",
+    TabWidth    = 130,
+    Size        = UDim2.fromOffset(460, 400),
+    Acrylic     = false,
+    Theme       = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl,
+})
+
+local Tabs = {
+    Info     = Window:AddTab({ Title="Info",     Icon="info"      }),
+    GunMod   = Window:AddTab({ Title="Gun Mod",  Icon="crosshair" }),
+    ESP      = Window:AddTab({ Title="ESP",      Icon="eye"       }),
+    Player   = Window:AddTab({ Title="Player",   Icon="user"      }),
+    Settings = Window:AddTab({ Title="Settings", Icon="settings"  }),
+}
+
+local function _tog(tab,id,title,default,cb) return tab:AddToggle(id,{Title=title,Default=default,Callback=cb}) end
+local function _sld(tab,id,title,def,min,max,cb) return tab:AddSlider(id,{Title=title,Default=def,Min=min,Max=max,Rounding=0,Callback=cb}) end
+local function _inp(tab,id,title,def,ph,cb) return tab:AddInput(id,{Title=title,Default=def,Placeholder=ph,Numeric=true,Finished=true,Callback=cb}) end
+local function _drop(tab,id,title,vals,def,cb) return tab:AddDropdown(id,{Title=title,Values=vals,Default=def,Callback=cb}) end
+
+Tabs.Info:AddParagraph({ Title="Join our Discord", Content="Get updates and report bugs." })
+Tabs.Info:AddButton({ Title="Copy Discord Link", Callback=function()
+    _pcall(function()
+        setclipboard("https://discord.gg/4xMFad5He")
+        Fluent:Notify({ Title="Copied!", Content="Discord link copied.", Duration=3 })
+    end)
+end })
+
+_tog(Tabs.GunMod,"SilentAimT","Silent Aim",false,function(v) C.SilentAim=v end)
+_drop(Tabs.GunMod,"AimPartD","Aim Part",{"Head","Body"},1,function(v)
+    C.AimPart=(v=="Body") and "HumanoidRootPart" or "Head"
+end)
+_sld(Tabs.GunMod,"FOVSld","FOV Radius",90,50,600,function(v) C.FOV=v end)
+_tog(Tabs.GunMod,"TeamCheckT","Team Check",false,function(v) C.TeamCheck=v end)
+_tog(Tabs.GunMod,"FriendCheckT","Friend Check",false,function(v) C.FriendCheck=v end)
+_tog(Tabs.GunMod,"InfAmmoT","Inf Ammo",false,function(v) C.InfAmmo=v; _applyMods() end)
+_tog(Tabs.GunMod,"NoRecoilT","No Recoil",false,function(v) C.NoRecoil=v; _applyMods() end)
+_tog(Tabs.GunMod,"FastFireT","Fast Fire",false,function(v) C.FastFire=v; _applyMods() end)
+_inp(Tabs.GunMod,"FireRateI","Fire Rate","0.05","e.g. 0.05",function(v)
+    local n=tonumber(v); if n then C.FireRate=n; if C.FastFire then _applyMods() end end
+end)
+_tog(Tabs.GunMod,"MultishotT","Multishot",false,function(v) C.Multishot=v; _applyMods() end)
+_inp(Tabs.GunMod,"BulletsI","Bullets Per Shot","15","e.g. 15",function(v)
+    local n=tonumber(v); if n then C.BulletPerShot=n; if C.Multishot then _applyMods() end end
+end)
+_tog(Tabs.GunMod,"MagicBulletsT","Magic Bullets",false,function(v) C.MagicBullets=v end)
+
+_tog(Tabs.ESP,"ESPPlayers","ESP Players (Name | Dist | HP | Chams)",false,function(v)
+    C.ESPEnabled=v
+    if not v then
+        for _,pl in ipairs(Players:GetPlayers()) do
+            _pcall(function()
+                local ch=pl.Character; if not ch then return end
+                local h=ch:FindFirstChild("Head")
+                if h then local e=h:FindFirstChild("StarCrowESP"); if e then e:Destroy() end end
+                local c=ch:FindFirstChild("StarCrowChams"); if c then c:Destroy() end
+            end)
+        end
+    end
+end)
+
+_tog(Tabs.Player,"NoclipT","Noclip",false,function(v) C.NoclipEnabled=v end)
+_tog(Tabs.Player,"LoopSpeedT","Enable WalkSpeed",false,function(v) C.LoopSpeedEnabled=v end)
+_sld(Tabs.Player,"WalkSpdSld","Speed Amount",30,16,250,function(v) C.WalkSpeed=v end)
+_tog(Tabs.Player,"InfJumpT","Infinite Jump",false,function(v) C.InfJumpEnabled=v end)
+
+Tabs.Settings:AddKeybind("ToggleUIKey",{
+    Title="Minimize UI Keybind", Mode="Toggle", Default="LeftControl",
+    ChangedCallback=function(k) Window.MinimizeKey=k end,
+})
+
+Window:SelectTab(1)
+Fluent:Notify({ Title="StarCrow Hub", Content="Gun Tycoon loaded âœ“", Duration=4 })
